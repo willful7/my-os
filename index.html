@@ -322,9 +322,9 @@ const CONFIG = {
 
 <!-- SUPABASE CONFIG -->
 <script>
-const SUPABASE_URL = "https://qciitzsmtsrotkpkldkf.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaWl0enNtdHNyb3RrcGtsZGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.WGlX50TVBerWyMTJK1xwVs55lmhseqBwIrcNXOTHtp4";
-const USE_SUPABASE = true;
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+const USE_SUPABASE = false;
 </script>
 
 <!-- APP LOGIC -->
@@ -469,4 +469,145 @@ function renderWeekStats(days,today){
   document.getElementById('w-done').textContent=done;
   const ve=document.getElementById('w-vs');
   ve.textContent=diff===0?'—':diff>0?`+${diff}%`:`${diff}%`;
-  ve.style.color=diff>0?'#3B6D11':diff<0?
+  ve.style.color=diff>0?'#3B6D11':diff<0?'#A32D2D':'var(--text3)';
+}
+
+function renderWeekGrid(days,today){
+  document.getElementById('grid-header').innerHTML='<div></div>'+
+    days.map((d,i)=>`<div class="grid-day-lbl ${dateKey(d)===today?'is-today':''}">${DLBLS[i]}</div>`).join('');
+  const body=document.getElementById('grid-body'); body.innerHTML='';
+  CONFIG.sections.forEach(sec=>{
+    sec.habits.forEach(h=>{
+      const row=document.createElement('div'); row.className='grid-habit-row';
+      let html=`<div class="grid-habit-name" style="color:${sec.color};">${h.name}</div>`;
+      days.forEach(d=>{
+        const dk=dateKey(d), l=loadLog(dk), done=!!l[h.id];
+        const isToday=dk===today, isFut=dk>today;
+        let cls='gdot';
+        if(done) cls+=' done';
+        else if(isToday) cls+=' is-today';
+        if(isFut) cls+=' is-future';
+        const bg=done?`background:${sec.color};`:'';
+        const tap=isFut?'':`onclick="toggleGridDot('${h.id}','${dk}','${sec.color}',this)"`;
+        html+=`<div class="grid-dot-wrap"><div class="${cls}" style="${bg}" ${tap}></div></div>`;
+      });
+      row.innerHTML=html; body.appendChild(row);
+    });
+  });
+}
+
+function toggleGridDot(hid,dk,color,el){
+  const log=loadLog(dk); log[hid]=!log[hid]; saveLog(dk,log);
+  const done=log[hid];
+  el.classList.toggle('done',done); el.classList.remove('is-today');
+  el.style.background=done?color:'';
+  if(dk===todayKey()){ todayLog=loadLog(dk); renderTodayStats(); }
+  const days=getWeekDays(viewMonday);
+  renderWeekStats(days,todayKey()); renderDayScores(days,todayKey());
+  syncLog(dk,log);
+}
+
+function renderWeekBig3(){
+  const el=document.getElementById('b3-prog-list'); el.innerHTML='';
+  CONFIG.big3.forEach(item=>{
+    const done=!!b3done[item.id], pct=done?100:0;
+    const div=document.createElement('div'); div.className='b3-prog-row';
+    div.innerHTML=`<div class="b3-prog-info"><div class="b3-prog-name">${item.text}</div><div class="b3-prog-bg"><div class="b3-prog-fill" style="width:${pct}%;"></div></div></div><div class="b3-prog-pct">${done?'100%':'—'}</div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderDayScores(days,today){
+  const c=document.getElementById('day-score-row'); c.innerHTML='';
+  days.forEach((d,i)=>{
+    const dk=dateKey(d), isToday=dk===today, isPast=dk<=today;
+    const score=isPast?dayScore(dk):null;
+    let col='var(--text3)';
+    if(score!==null){ col=score>=80?'#3B6D11':score>=50?'#BA7517':'#A32D2D'; }
+    const chip=document.createElement('div');
+    chip.className=`day-score-chip${isToday?' is-today':''}`;
+    chip.innerHTML=`<div class="ds-lbl ${isToday?'is-today':''}">${DLBLS[i]}</div><div class="ds-num" style="color:${col};">${score!==null?score+'%':'—'}</div>`;
+    c.appendChild(chip);
+  });
+}
+
+function shiftWeek(dir){
+  viewMonday=new Date(viewMonday);
+  viewMonday.setDate(viewMonday.getDate()+dir*7);
+  renderWeekView();
+}
+
+// ── Navigation ────────────────────────────────────────────────
+function navigate(tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const screen=document.getElementById(`screen-${tab}`);
+  const nav=document.getElementById(`nav-${tab}`);
+  if(screen){ screen.classList.add('active'); }
+  else{ document.getElementById('screen-today').classList.add('active'); document.getElementById('nav-today').classList.add('active'); showToast(`${tab.charAt(0).toUpperCase()+tab.slice(1)} view coming soon`); return; }
+  if(nav) nav.classList.add('active');
+  if(tab==='week') renderWeekView();
+}
+
+// ── Supabase ──────────────────────────────────────────────────
+function setSyncStatus(s){ document.getElementById('sync-dot').className=s; }
+async function syncLog(dk,log){
+  if(!USE_SUPABASE) return;
+  setSyncStatus('syncing');
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?on_conflict=date`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({date:dk,log,updated_at:new Date().toISOString()})
+    });
+    setSyncStatus(res.ok?'synced':'error');
+  }catch{ setSyncStatus('error'); }
+}
+async function loadFromSupabase(){
+  if(!USE_SUPABASE) return;
+  setSyncStatus('syncing');
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?date=eq.${todayKey()}&select=log`,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
+    if(res.ok){ const d=await res.json(); if(d.length&&d[0].log){ todayLog=d[0].log; saveLog(todayKey(),todayLog); } }
+    setSyncStatus('synced');
+  }catch{ setSyncStatus('error'); }
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── Midnight reset ────────────────────────────────────────────
+function scheduleMidnight(){
+  const now=new Date(), mid=new Date(now);
+  mid.setDate(now.getDate()+1); mid.setHours(0,0,5,0);
+  setTimeout(()=>{ todayLog={}; renderToday(); scheduleMidnight(); }, mid-now);
+}
+
+// ── Init ──────────────────────────────────────────────────────
+async function init(){
+  try {
+    await Promise.race([
+      loadFromSupabase(),
+      new Promise(resolve => setTimeout(resolve, 3000))
+    ]);
+  } catch(e) {}
+  renderToday();
+  scheduleMidnight();
+  document.getElementById('loading').classList.add('hidden');
+}
+init();
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+}
+</script>
+
+</body>
+</html>
