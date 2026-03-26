@@ -2,7 +2,7 @@
 // Caches the app shell for offline use.
 // Update CACHE_VERSION whenever you deploy changes.
 
-const CACHE_VERSION = 'my-os-v1';
+const CACHE_VERSION = 'my-os-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
