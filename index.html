@@ -683,7 +683,7 @@ async function syncToSupabase() {
       log:         log,
       updated_at:  new Date().toISOString(),
     };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?date=eq.${todayKey()}`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/habit_logs`, {
       method:  'POST',
       headers: {
         'apikey':        SUPABASE_KEY,
@@ -698,7 +698,6 @@ async function syncToSupabase() {
     setSyncStatus('error');
   }
 }
-
 async function loadFromSupabase() {
   if (!USE_SUPABASE) return;
   setSyncStatus('syncing');
