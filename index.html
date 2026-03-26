@@ -12,7 +12,6 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png"/>
   <title>My OS</title>
   <style>
-    /* ── Reset & base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg:       #ffffff;
@@ -26,23 +25,6 @@
       --radius:   12px;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bot: env(safe-area-inset-bottom, 0px);
-
-      /* section accent colors */
-      --faith:         #534AB7;
-      --faith-light:   #EEEDFE;
-      --faith-mid:     #AFA9EC;
-      --workout:       #1D9E75;
-      --workout-light: #E1F5EE;
-      --workout-mid:   #5DCAA5;
-      --relate:        #D4537E;
-      --relate-light:  #FBEAF0;
-      --relate-mid:    #ED93B1;
-      --self:          #BA7517;
-      --self-light:    #FAEEDA;
-      --self-mid:      #EF9F27;
-      --health:        #378ADD;
-      --health-light:  #E6F1FB;
-      --health-mid:    #85B7EB;
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -63,8 +45,6 @@
       color: var(--text);
       overflow: hidden;
     }
-
-    /* ── App shell ────────────────────────────────────────────── */
     #app {
       display: flex;
       flex-direction: column;
@@ -72,302 +52,197 @@
       padding-top: var(--safe-top);
       padding-bottom: var(--safe-bot);
     }
-    #screen {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 16px;
-    }
-    /* hide scrollbar */
-    #screen::-webkit-scrollbar { display: none; }
 
-    /* ── Top bar ──────────────────────────────────────────────── */
-    .top-bar {
-      padding: 12px 16px 10px;
-      border-bottom: 0.5px solid var(--border);
-      background: var(--bg);
-    }
-    .greeting {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .date-line {
-      font-size: 12px;
-      color: var(--text3);
-      margin-top: 1px;
-    }
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 10px;
-    }
-    .stat-chip {
-      background: var(--bg2);
-      border-radius: 8px;
-      padding: 7px 6px;
-      text-align: center;
-    }
-    .stat-num {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1;
-    }
-    .stat-lbl {
-      font-size: 10px;
-      color: var(--text3);
-      margin-top: 3px;
-    }
+    /* screens */
+    .screen { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 16px; display: none; }
+    .screen.active { display: block; }
+    .screen::-webkit-scrollbar { display: none; }
 
-    /* ── Big 3 ────────────────────────────────────────────────── */
-    .big3-block {
-      margin: 10px 14px 0;
-      background: var(--faith-light);
-      border-radius: var(--radius);
-      padding: 10px 12px;
-      border: 0.5px solid var(--faith-mid);
+    /* top bar */
+    .top-bar { padding: 12px 16px 10px; border-bottom: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; }
+    .greeting { font-size: 20px; font-weight: 600; color: var(--text); }
+    .date-line { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+    .stat-chip { background: var(--bg2); border-radius: 8px; padding: 7px 6px; text-align: center; }
+    .stat-num { font-size: 18px; font-weight: 600; color: var(--text); line-height: 1; }
+    .stat-lbl { font-size: 10px; color: var(--text3); margin-top: 3px; }
+
+    /* week bar */
+    .week-bar { padding: 10px 16px; border-bottom: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; }
+    .week-nav-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .week-nav-btn { font-size: 24px; color: var(--text2); cursor: pointer; padding: 0 8px; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .week-nav-center { text-align: center; }
+    .week-nav-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .week-nav-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+    .week-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+
+    /* big 3 */
+    .big3-block { margin: 10px 14px 0; background: #EEEDFE; border-radius: var(--radius); padding: 10px 12px; border: 0.5px solid #AFA9EC; }
+    @media (prefers-color-scheme: dark) {
+      .big3-block { background: #26215C; border-color: #534AB7; }
     }
-    .big3-title {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--faith);
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
-    }
-    .big3-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .big3-title { font-size: 10px; font-weight: 600; color: #534AB7; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .big3-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .big3-item:last-child { margin-bottom: 0; }
-    .b3-box {
-      width: 16px; height: 16px;
-      border-radius: 4px;
-      border: 1.5px solid var(--faith);
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .15s;
-    }
-    .b3-box.done { background: var(--faith); border-color: var(--faith); }
-    .b3-box.done::after {
-      content: '';
-      width: 8px; height: 4px;
-      border-left: 1.5px solid #fff;
-      border-bottom: 1.5px solid #fff;
-      transform: rotate(-45deg) translateY(-1px);
-      display: block;
-    }
-    .b3-text { font-size: 13px; color: var(--faith); }
+    .b3-box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #534AB7; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .b3-box.done { background: #534AB7; border-color: #534AB7; }
+    .b3-box.done::after { content: ''; width: 8px; height: 4px; border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(-45deg) translateY(-1px); display: block; }
+    .b3-text { font-size: 13px; color: #3C3489; }
+    @media (prefers-color-scheme: dark) { .b3-text { color: #CECBF6; } }
     .b3-text.done { text-decoration: line-through; opacity: 0.6; }
 
-    /* ── Sections ─────────────────────────────────────────────── */
-    .section {
-      margin: 8px 14px 0;
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .sec-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
+    /* sections */
+    .section { margin: 8px 14px 0; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .sec-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
     .sec-left { display: flex; align-items: center; gap: 8px; }
-    .sec-dot {
-      width: 9px; height: 9px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
+    .sec-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
     .sec-name { font-size: 14px; font-weight: 500; color: var(--text); }
     .sec-meta { font-size: 11px; color: var(--text3); margin-left: 4px; }
-    .sec-chevron {
-      font-size: 12px; color: var(--text3);
-      transition: transform .2s;
-      display: inline-block;
-    }
+    .sec-chevron { font-size: 12px; color: var(--text3); transition: transform .2s; display: inline-block; }
     .sec-chevron.open { transform: rotate(90deg); }
     .sec-body { border-top: 0.5px solid var(--border); }
     .section.collapsed .sec-body { display: none; }
 
-    /* ── Habit rows ───────────────────────────────────────────── */
-    .habit-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 12px;
-      border-bottom: 0.5px solid var(--border);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    /* habit rows */
+    .habit-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .habit-row:last-child { border-bottom: none; }
     .habit-left { display: flex; align-items: center; gap: 10px; }
-    .hcheck {
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border2);
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .15s;
-    }
+    .hcheck { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
     .hcheck.done { border-color: transparent; }
-    .hcheck.done::after {
-      content: '';
-      width: 10px; height: 6px;
-      border-left: 2px solid #fff;
-      border-bottom: 2px solid #fff;
-      transform: rotate(-45deg) translateY(-1px);
-      display: block;
-    }
+    .hcheck.done::after { content: ''; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); display: block; }
     .habit-name { font-size: 14px; color: var(--text); transition: color .15s; }
     .habit-name.done { color: var(--text3); text-decoration: line-through; }
-    .streak-wrap {
-      display: flex; align-items: center; gap: 4px;
-      font-size: 12px; color: var(--text3);
-    }
-    .streak-fire {
-      width: 10px; height: 10px;
-      border-radius: 50% 50% 50% 10%;
-      background: #EF9F27;
-      display: inline-block;
-    }
+    .streak-wrap { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text3); }
+    .streak-fire { width: 10px; height: 10px; border-radius: 50% 50% 50% 10%; background: #EF9F27; display: inline-block; }
 
-    /* ── Sync indicator ───────────────────────────────────────── */
-    #sync-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--text3);
-      display: inline-block;
-      margin-left: 6px;
-      vertical-align: middle;
-      transition: background .3s;
-    }
+    /* week grid */
+    .week-section { margin: 10px 14px 0; }
+    .week-sec-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 5px; }
+    .habit-grid-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .grid-header-row { display: grid; grid-template-columns: 1fr repeat(7, 28px); padding: 5px 10px; border-bottom: 0.5px solid var(--border); }
+    .grid-day-lbl { text-align: center; font-size: 10px; font-weight: 600; color: var(--text3); }
+    .grid-day-lbl.is-today { color: var(--text); }
+    .grid-habit-row { display: grid; grid-template-columns: 1fr repeat(7, 28px); align-items: center; padding: 5px 10px; border-bottom: 0.5px solid var(--border); }
+    .grid-habit-row:last-child { border-bottom: none; }
+    .grid-habit-name { font-size: 11px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 4px; }
+    .grid-dot-wrap { display: flex; align-items: center; justify-content: center; }
+    .gdot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border2); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all .12s; flex-shrink: 0; }
+    .gdot.done { border-color: transparent; }
+    .gdot.is-today { border-style: dashed; }
+    .gdot.is-future { opacity: 0.2; border-style: dashed; cursor: default; pointer-events: none; }
+
+    /* big 3 progress */
+    .b3-prog-card { background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: var(--radius); padding: 10px 12px; }
+    @media (prefers-color-scheme: dark) { .b3-prog-card { background: #26215C; border-color: #534AB7; } }
+    .b3-prog-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .b3-prog-row:last-child { margin-bottom: 0; }
+    .b3-prog-info { flex: 1; min-width: 0; }
+    .b3-prog-name { font-size: 12px; color: #3C3489; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    @media (prefers-color-scheme: dark) { .b3-prog-name { color: #CECBF6; } }
+    .b3-prog-bg { height: 4px; background: #AFA9EC; border-radius: 2px; }
+    .b3-prog-fill { height: 4px; background: #534AB7; border-radius: 2px; transition: width .3s; }
+    .b3-prog-pct { font-size: 11px; font-weight: 600; color: #7F77DD; min-width: 30px; text-align: right; }
+
+    /* day scores */
+    .day-score-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .day-score-chip { background: var(--bg2); border-radius: 8px; padding: 6px 2px; text-align: center; }
+    .day-score-chip.is-today { background: var(--bg3); border: 0.5px solid var(--border2); }
+    .ds-lbl { font-size: 9px; font-weight: 600; color: var(--text3); }
+    .ds-lbl.is-today { color: var(--text); }
+    .ds-num { font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+    /* sync dot */
+    #sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); display: inline-block; margin-left: 6px; vertical-align: middle; transition: background .3s; }
     #sync-dot.syncing { background: #EF9F27; }
     #sync-dot.synced  { background: #1D9E75; }
     #sync-dot.error   { background: #E24B4A; }
 
-    /* ── Bottom nav ───────────────────────────────────────────── */
-    .bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0 6px;
-      border-top: 0.5px solid var(--border);
-      background: var(--bg);
-    }
-    .nav-item {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 3px; padding: 4px 14px;
-      border-radius: 10px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: background .15s;
-    }
+    /* bottom nav */
+    .bottom-nav { display: flex; justify-content: space-around; padding: 8px 0 6px; border-top: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 14px; border-radius: 10px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background .15s; }
     .nav-item.active { background: var(--bg2); }
     .nav-icon { width: 22px; height: 22px; }
     .nav-lbl { font-size: 10px; color: var(--text3); }
     .nav-item.active .nav-lbl { color: var(--text); font-weight: 500; }
 
-    /* ── Toast ────────────────────────────────────────────────── */
-    #toast {
-      position: absolute;
-      bottom: 90px; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--text);
-      color: var(--bg);
-      font-size: 13px;
-      padding: 8px 16px;
-      border-radius: 20px;
-      opacity: 0;
-      transition: all .3s;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 100;
-    }
+    /* toast */
+    #toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); font-size: 13px; padding: 8px 16px; border-radius: 20px; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 100; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ── Loading ──────────────────────────────────────────────── */
-    #loading {
-      position: fixed; inset: 0;
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 12px;
-      z-index: 999;
-    }
+    /* loading */
+    #loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 999; }
     #loading.hidden { display: none; }
-    .spinner {
-      width: 28px; height: 28px;
-      border: 2px solid var(--border);
-      border-top-color: var(--faith);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: #534AB7; border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     #loading p { font-size: 13px; color: var(--text3); }
   </style>
 </head>
 <body>
 
-<div id="loading">
-  <div class="spinner"></div>
-  <p>Loading your day…</p>
-</div>
-
+<div id="loading"><div class="spinner"></div><p>Loading your day…</p></div>
 <div id="toast"></div>
 
 <div id="app">
 
-  <!-- Top bar -->
-  <div class="top-bar">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div class="greeting" id="greeting">Good morning, Will</div>
-      <span id="sync-dot" title="Sync status"></span>
-    </div>
-    <div class="date-line" id="date-line">—</div>
-    <div class="stats-row">
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-done">0</div>
-        <div class="stat-lbl">done today</div>
+  <!-- TODAY screen -->
+  <div id="screen-today" class="screen active">
+    <div class="top-bar">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="greeting" id="greeting">Good morning</div>
+        <span id="sync-dot"></span>
       </div>
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-streak">—</div>
-        <div class="stat-lbl">best streak</div>
-      </div>
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-week">—%</div>
-        <div class="stat-lbl">week score</div>
-      </div>
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-quarter" style="color:#3B6D11;">Q1</div>
-        <div class="stat-lbl">on track</div>
+      <div class="date-line" id="date-line">—</div>
+      <div class="stats-row">
+        <div class="stat-chip"><div class="stat-num" id="stat-done">0</div><div class="stat-lbl">done today</div></div>
+        <div class="stat-chip"><div class="stat-num" id="stat-streak">—</div><div class="stat-lbl">best streak</div></div>
+        <div class="stat-chip"><div class="stat-num" id="stat-week">—%</div><div class="stat-lbl">week score</div></div>
+        <div class="stat-chip"><div class="stat-num" id="stat-quarter" style="color:#3B6D11;">Q1</div><div class="stat-lbl">on track</div></div>
       </div>
     </div>
-  </div>
-
-  <!-- Scrollable screen -->
-  <div id="screen">
-
-    <!-- Big 3 -->
     <div class="big3-block">
       <div class="big3-title">THIS WEEK'S BIG 3</div>
       <div id="big3-list"></div>
     </div>
-
-    <!-- Habit sections injected here -->
     <div id="sections-container"></div>
+  </div>
 
+  <!-- WEEK screen -->
+  <div id="screen-week" class="screen">
+    <div class="week-bar">
+      <div class="week-nav-row">
+        <div class="week-nav-btn" onclick="shiftWeek(-1)">&#8249;</div>
+        <div class="week-nav-center">
+          <div class="week-nav-title" id="week-nav-title">—</div>
+          <div class="week-nav-sub" id="week-nav-sub">—</div>
+        </div>
+        <div class="week-nav-btn" onclick="shiftWeek(1)">&#8250;</div>
+      </div>
+      <div class="week-stats-row">
+        <div class="stat-chip"><div class="stat-num" id="w-score">—%</div><div class="stat-lbl">week score</div></div>
+        <div class="stat-chip"><div class="stat-num" id="w-done">—</div><div class="stat-lbl">habits done</div></div>
+        <div class="stat-chip"><div class="stat-num" id="w-vs">—</div><div class="stat-lbl">vs last week</div></div>
+      </div>
+    </div>
+    <div class="week-section">
+      <div class="week-sec-label">HABIT GRID</div>
+      <div class="habit-grid-card">
+        <div class="grid-header-row" id="grid-header"></div>
+        <div id="grid-body"></div>
+      </div>
+    </div>
+    <div class="week-section">
+      <div class="week-sec-label">THIS WEEK'S BIG 3</div>
+      <div class="b3-prog-card" id="b3-prog-list"></div>
+    </div>
+    <div class="week-section" style="margin-bottom:4px;">
+      <div class="week-sec-label">DAY BY DAY</div>
+      <div class="day-score-row" id="day-score-row"></div>
+    </div>
   </div>
 
   <!-- Bottom nav -->
   <nav class="bottom-nav">
-    <div class="nav-item active" onclick="navigate('today')">
+    <div class="nav-item active" id="nav-today" onclick="navigate('today')">
       <svg class="nav-icon" viewBox="0 0 22 22" fill="none">
         <rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor" opacity=".8"/>
         <rect x="12" y="3" width="7" height="7" rx="2" fill="currentColor" opacity=".3"/>
@@ -376,7 +251,7 @@
       </svg>
       <span class="nav-lbl">Today</span>
     </div>
-    <div class="nav-item" onclick="navigate('week')">
+    <div class="nav-item" id="nav-week" onclick="navigate('week')">
       <svg class="nav-icon" viewBox="0 0 22 22" fill="none">
         <rect x="2" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/>
         <line x1="2" y1="9" x2="20" y2="9" stroke="currentColor" stroke-width="1"/>
@@ -385,7 +260,7 @@
       </svg>
       <span class="nav-lbl">Week</span>
     </div>
-    <div class="nav-item" onclick="navigate('projects')">
+    <div class="nav-item" id="nav-projects" onclick="navigate('projects')">
       <svg class="nav-icon" viewBox="0 0 22 22" fill="none">
         <rect x="2" y="5" width="18" height="3.5" rx="1" fill="currentColor" opacity=".5"/>
         <rect x="2" y="11" width="14" height="3.5" rx="1" fill="currentColor" opacity=".4"/>
@@ -393,7 +268,7 @@
       </svg>
       <span class="nav-lbl">Projects</span>
     </div>
-    <div class="nav-item" onclick="navigate('plan')">
+    <div class="nav-item" id="nav-plan" onclick="navigate('plan')">
       <svg class="nav-icon" viewBox="0 0 22 22" fill="none">
         <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.2"/>
         <line x1="11" y1="6" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -402,375 +277,196 @@
       <span class="nav-lbl">Plan</span>
     </div>
   </nav>
-
 </div>
 
-<!-- ─────────────────────────────────────────────────────────────
-     CONFIG — edit this to make it yours
-     ──────────────────────────────────────────────────────────── -->
+<!-- CONFIG — edit this to make it yours -->
 <script>
 const CONFIG = {
   name: "Will",
-
-  // Your Big 3 for the week — update every Sunday/Friday
   big3: [
     { id: "b1", text: "Complete InfoComm talk outline" },
     { id: "b2", text: "PMP — finish chapter 4 + practice quiz" },
     { id: "b3", text: "Date night with Becky (Friday)" },
   ],
-
-  // Habit sections — add/remove habits freely
   sections: [
-    {
-      id: "faith",
-      name: "Faith",
-      color: "#534AB7",
-      colorLight: "#EEEDFE",
-      collapsed: false,
+    { id: "faith", name: "Faith", color: "#534AB7", colorLight: "#EEEDFE", collapsed: false,
       habits: [
         { id: "bible",   name: "Bible reading",      streak: 5 },
         { id: "prayer",  name: "Prayer / reflection", streak: 5 },
-      ]
-    },
-    {
-      id: "workout",
-      name: "Workout",
-      color: "#1D9E75",
-      colorLight: "#E1F5EE",
-      collapsed: false,
+      ]},
+    { id: "workout", name: "Workout", color: "#1D9E75", colorLight: "#E1F5EE", collapsed: false,
       habits: [
         { id: "lift",     name: "Lift",       streak: 3 },
         { id: "walkrun",  name: "Walk / run", streak: 0 },
         { id: "mobility", name: "Mobility",   streak: 2 },
-      ]
-    },
-    {
-      id: "relationships",
-      name: "Relationships",
-      color: "#D4537E",
-      colorLight: "#FBEAF0",
-      collapsed: false,
+      ]},
+    { id: "relationships", name: "Relationships", color: "#D4537E", colorLight: "#FBEAF0", collapsed: false,
       habits: [
-        { id: "becky",  name: "Quality time — Becky",      streak: 7 },
+        { id: "becky",  name: "Quality time — Becky",       streak: 7 },
         { id: "family", name: "Reach out — family / friend", streak: 0 },
-      ]
-    },
-    {
-      id: "self",
-      name: "Self",
-      color: "#BA7517",
-      colorLight: "#FAEEDA",
-      collapsed: true,
+      ]},
+    { id: "self", name: "Self", color: "#BA7517", colorLight: "#FAEEDA", collapsed: true,
       habits: [
-        { id: "pmp",       name: "PMP study block",    streak: 4 },
-        { id: "python",    name: "Python / learning",  streak: 0 },
-        { id: "journaling",name: "Journaling",         streak: 2 },
-      ]
-    },
-    {
-      id: "health",
-      name: "Health",
-      color: "#378ADD",
-      colorLight: "#E6F1FB",
-      collapsed: true,
+        { id: "pmp",        name: "PMP study block",   streak: 4 },
+        { id: "python",     name: "Python / learning", streak: 0 },
+        { id: "journaling", name: "Journaling",        streak: 2 },
+      ]},
+    { id: "health", name: "Health", color: "#378ADD", colorLight: "#E6F1FB", collapsed: true,
       habits: [
         { id: "eatplan", name: "Eat on plan", streak: 3 },
         { id: "water",   name: "Water goal",  streak: 5 },
-      ]
-    },
+      ]},
   ]
 };
 </script>
 
-<!-- ─────────────────────────────────────────────────────────────
-     SUPABASE CONFIG — paste your project URL and anon key here
-     Get these from: supabase.com → your project → Settings → API
-     ──────────────────────────────────────────────────────────── -->
+<!-- SUPABASE CONFIG -->
 <script>
-const SUPABASE_URL  = "https://qciitzsmtsrotkpkldkf.supabase.co";   // e.g. https://xyzabc.supabase.co
-const SUPABASE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaWl0enNtdHNyb3RrcGtsZGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.WGlX50TVBerWyMTJK1xwVs55lmhseqBwIrcNXOTHtp4";
-
-// Set to true once you've wired up Supabase.
-// While false, the app runs entirely on localStorage.
-const USE_SUPABASE = true;
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+const USE_SUPABASE = false;
 </script>
 
-<!-- ─────────────────────────────────────────────────────────────
-     APP LOGIC
-     ──────────────────────────────────────────────────────────── -->
+<!-- APP LOGIC -->
 <script>
-// ── Date helpers ────────────────────────────────────────────────
-function todayKey() {
-  const d = new Date();
+// ── Date helpers ──────────────────────────────────────────────
+function dateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function weekKey() {
-  const d = new Date();
-  const jan1 = new Date(d.getFullYear(), 0, 1);
-  return `${d.getFullYear()}-W${String(Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7)).padStart(2,'0')}`;
+function todayKey() { return dateKey(new Date()); }
+
+function getMondayOf(d) {
+  const day = d.getDay() || 7;
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - day + 1);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+function getWeekDays(monday) {
+  return Array.from({length:7}, (_,i) => { const d=new Date(monday); d.setDate(monday.getDate()+i); return d; });
+}
+function weekLabel(monday) {
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `Week of ${months[monday.getMonth()]} ${monday.getDate()}`;
+}
+function quarterWeekLabel(d) {
+  const jan1 = new Date(d.getFullYear(),0,1);
+  const wn   = Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
+  const q    = Math.ceil((d.getMonth()+1)/3);
+  const qw   = wn - (q-1)*13;
+  return `Week ${Math.max(1,Math.min(13,qw))} of 13 · Q${q}`;
 }
 function formatDate(d) {
-  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const mon =['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${days[d.getDay()]}, ${mon[d.getMonth()]} ${d.getDate()}`;
 }
 function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
+  const h=new Date().getHours();
+  return h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+}
+function weekKey() {
+  const d=new Date(), jan1=new Date(d.getFullYear(),0,1);
+  return `${d.getFullYear()}-W${String(Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7)).padStart(2,'0')}`;
 }
 
-// ── Local state ─────────────────────────────────────────────────
-// Storage key for today's completions
-function storageKey() { return `habitlog-${todayKey()}`; }
-function big3Key()    { return `big3-${weekKey()}`; }
+// ── Storage ───────────────────────────────────────────────────
+function loadLog(dk) { try{return JSON.parse(localStorage.getItem(`habitlog-${dk}`)||'{}');}catch{return{};} }
+function saveLog(dk,log){ localStorage.setItem(`habitlog-${dk}`,JSON.stringify(log)); }
+function loadB3(){ try{return JSON.parse(localStorage.getItem(`big3-${weekKey()}`)||'{}');}catch{return{};} }
+function saveB3(done){ localStorage.setItem(`big3-${weekKey()}`,JSON.stringify(done)); }
 
-function loadTodayLog() {
-  try { return JSON.parse(localStorage.getItem(storageKey()) || '{}'); }
-  catch { return {}; }
+// ── Scores ────────────────────────────────────────────────────
+function allIds(){ return CONFIG.sections.flatMap(s=>s.habits.map(h=>h.id)); }
+function dayScore(dk){
+  const log=loadLog(dk), ids=allIds();
+  return ids.length?Math.round(ids.filter(id=>log[id]).length/ids.length*100):0;
 }
-function saveTodayLog(log) {
-  localStorage.setItem(storageKey(), JSON.stringify(log));
-}
-function loadBig3Done() {
-  try { return JSON.parse(localStorage.getItem(big3Key()) || '{}'); }
-  catch { return {}; }
-}
-function saveBig3Done(done) {
-  localStorage.setItem(big3Key(), JSON.stringify(done));
-}
-
-// ── Week score ──────────────────────────────────────────────────
-function calcWeekScore() {
-  const allHabits = CONFIG.sections.flatMap(s => s.habits.map(h => h.id));
-  const total     = allHabits.length * 7;
-  let done = 0;
-  const today = new Date();
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    // go back to Monday of current week
-    const day = today.getDay() || 7;
-    d.setDate(today.getDate() - day + 1 + i);
-    const key = `habitlog-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    try {
-      const log = JSON.parse(localStorage.getItem(key) || '{}');
-      done += Object.values(log).filter(Boolean).length;
-    } catch {}
-  }
-  return total > 0 ? Math.round((done / total) * 100) : 0;
+function weekScoreFor(monday){
+  const today=todayKey(), past=getWeekDays(monday).filter(d=>dateKey(d)<=today);
+  if(!past.length) return 0;
+  const ids=allIds(); let tot=0,done=0;
+  past.forEach(d=>{ const l=loadLog(dateKey(d)); tot+=ids.length; done+=ids.filter(id=>l[id]).length; });
+  return tot?Math.round(done/tot*100):0;
 }
 
-// ── Render ───────────────────────────────────────────────────────
-let log     = loadTodayLog();
-let b3done  = loadBig3Done();
+// ── State ─────────────────────────────────────────────────────
+let todayLog   = loadLog(todayKey());
+let b3done     = loadB3();
+let viewMonday = getMondayOf(new Date());
 
-function renderGreeting() {
-  document.getElementById('greeting').textContent = `${getGreeting()}, ${CONFIG.name}`;
-  document.getElementById('date-line').textContent = formatDate(new Date());
+// ── TODAY render ──────────────────────────────────────────────
+function renderGreeting(){
+  document.getElementById('greeting').textContent=`${getGreeting()}, ${CONFIG.name}`;
+  document.getElementById('date-line').textContent=formatDate(new Date());
 }
-
-function renderBig3() {
-  const el = document.getElementById('big3-list');
-  el.innerHTML = '';
-  CONFIG.big3.forEach(item => {
-    const done = !!b3done[item.id];
-    const row  = document.createElement('div');
-    row.className = 'big3-item';
-    row.innerHTML = `
-      <div class="b3-box ${done ? 'done' : ''}"></div>
-      <span class="b3-text ${done ? 'done' : ''}">${item.text}</span>`;
-    row.addEventListener('click', () => {
-      b3done[item.id] = !b3done[item.id];
-      saveBig3Done(b3done);
-      renderBig3();
-    });
+function renderBig3(){
+  const el=document.getElementById('big3-list'); el.innerHTML='';
+  CONFIG.big3.forEach(item=>{
+    const done=!!b3done[item.id], row=document.createElement('div');
+    row.className='big3-item';
+    row.innerHTML=`<div class="b3-box ${done?'done':''}"></div><span class="b3-text ${done?'done':''}">${item.text}</span>`;
+    row.addEventListener('click',()=>{ b3done[item.id]=!b3done[item.id]; saveB3(b3done); renderBig3(); renderWeekBig3(); });
     el.appendChild(row);
   });
 }
-
-function renderSections() {
-  const container = document.getElementById('sections-container');
-  container.innerHTML = '';
-  CONFIG.sections.forEach(section => {
-    const doneCount  = section.habits.filter(h => log[h.id]).length;
-    const totalCount = section.habits.length;
-    const collapsed  = section._collapsed !== undefined ? section._collapsed : section.collapsed;
-
-    const wrap = document.createElement('div');
-    wrap.className = `section${collapsed ? ' collapsed' : ''}`;
-    wrap.id = `sec-${section.id}`;
-
-    // Header
-    const header = document.createElement('div');
-    header.className = 'sec-header';
-    header.innerHTML = `
-      <div class="sec-left">
-        <div class="sec-dot" style="background:${section.color};"></div>
-        <span class="sec-name">${section.name}</span>
-        <span class="sec-meta">${doneCount}/${totalCount}</span>
-      </div>
-      <span class="sec-chevron ${collapsed ? '' : 'open'}">&#9654;</span>`;
-    header.addEventListener('click', () => {
-      section._collapsed = !wrap.classList.contains('collapsed');
-      renderSections();
-    });
-    wrap.appendChild(header);
-
-    // Body
-    const body = document.createElement('div');
-    body.className = 'sec-body';
-    section.habits.forEach(habit => {
-      const done = !!log[habit.id];
-      const row  = document.createElement('div');
-      row.className = 'habit-row';
-      row.innerHTML = `
-        <div class="habit-left">
-          <div class="hcheck ${done ? 'done' : ''}" style="${done ? `background:${section.color};` : ''}"></div>
-          <span class="habit-name ${done ? 'done' : ''}">${habit.name}</span>
-        </div>
-        <div class="streak-wrap">
-          ${habit.streak > 0 ? `<div class="streak-fire" style="background:${section.color};"></div> ${habit.streak}` : '— 0'}
-        </div>`;
-      row.addEventListener('click', () => toggleHabit(habit.id, section.color));
+function renderSections(){
+  const c=document.getElementById('sections-container'); c.innerHTML='';
+  CONFIG.sections.forEach(sec=>{
+    const dc=sec.habits.filter(h=>todayLog[h.id]).length;
+    const col=sec._collapsed!==undefined?sec._collapsed:sec.collapsed;
+    const wrap=document.createElement('div');
+    wrap.className=`section${col?' collapsed':''}`;
+    const hdr=document.createElement('div'); hdr.className='sec-header';
+    hdr.innerHTML=`<div class="sec-left"><div class="sec-dot" style="background:${sec.color};"></div><span class="sec-name">${sec.name}</span><span class="sec-meta">${dc}/${sec.habits.length}</span></div><span class="sec-chevron ${col?'':'open'}">&#9654;</span>`;
+    hdr.addEventListener('click',()=>{ sec._collapsed=!wrap.classList.contains('collapsed'); renderSections(); });
+    const body=document.createElement('div'); body.className='sec-body';
+    sec.habits.forEach(h=>{
+      const done=!!todayLog[h.id], row=document.createElement('div'); row.className='habit-row';
+      row.innerHTML=`<div class="habit-left"><div class="hcheck ${done?'done':''}" style="${done?`background:${sec.color};`:''}"></div><span class="habit-name ${done?'done':''}">${h.name}</span></div><div class="streak-wrap">${h.streak>0?`<div class="streak-fire" style="background:${sec.color};"></div> ${h.streak}`:'— 0'}</div>`;
+      row.addEventListener('click',()=>toggleHabit(h.id,sec.color));
       body.appendChild(row);
     });
-    wrap.appendChild(body);
-    container.appendChild(wrap);
+    wrap.appendChild(hdr); wrap.appendChild(body); c.appendChild(wrap);
   });
 }
+function renderTodayStats(){
+  const ids=allIds(), done=ids.filter(id=>todayLog[id]).length;
+  const best=Math.max(0,...CONFIG.sections.flatMap(s=>s.habits.map(h=>h.streak)));
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-streak').textContent=best;
+  document.getElementById('stat-week').textContent=weekScoreFor(getMondayOf(new Date()))+'%';
+}
+function renderToday(){ renderGreeting(); renderBig3(); renderSections(); renderTodayStats(); }
 
-function renderStats() {
-  const allHabits = CONFIG.sections.flatMap(s => s.habits);
-  const doneToday = allHabits.filter(h => log[h.id]).length;
-  const allStreaks = allHabits.map(h => h.streak);
-  const bestStreak = allStreaks.length ? Math.max(...allStreaks) : 0;
-  const weekScore  = calcWeekScore();
-
-  document.getElementById('stat-done').textContent   = doneToday;
-  document.getElementById('stat-streak').textContent  = bestStreak;
-  document.getElementById('stat-week').textContent    = weekScore + '%';
+function toggleHabit(id,color){
+  todayLog[id]=!todayLog[id]; saveLog(todayKey(),todayLog);
+  renderSections(); renderTodayStats(); syncLog(todayKey(),todayLog);
 }
 
-function renderAll() {
-  renderGreeting();
-  renderBig3();
-  renderSections();
-  renderStats();
+// ── WEEK render ───────────────────────────────────────────────
+const DLBLS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+function renderWeekView(){
+  const today=todayKey(), days=getWeekDays(viewMonday);
+  const isNow=dateKey(getMondayOf(new Date()))===dateKey(viewMonday);
+  document.getElementById('week-nav-title').textContent=weekLabel(viewMonday);
+  document.getElementById('week-nav-sub').textContent=isNow?quarterWeekLabel(new Date()):'';
+  renderWeekStats(days,today);
+  renderWeekGrid(days,today);
+  renderWeekBig3();
+  renderDayScores(days,today);
 }
 
-// ── Toggle habit ─────────────────────────────────────────────────
-function toggleHabit(habitId, color) {
-  log[habitId] = !log[habitId];
-  saveTodayLog(log);
-  renderAll();
-  syncToSupabase();
-}
-
-// ── Supabase sync ────────────────────────────────────────────────
-function setSyncStatus(status) {
-  const dot = document.getElementById('sync-dot');
-  dot.className = '';
-  dot.classList.add(status);
-}
-
-async function syncToSupabase() {
-  if (!USE_SUPABASE) return;
-  setSyncStatus('syncing');
-  try {
-    const payload = {
-      date:        todayKey(),
-      log:         log,
-      updated_at:  new Date().toISOString(),
-    };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?on_conflict=date`, {
-      method:  'POST',
-      headers: {
-        'apikey':        SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type':  'application/json',
-        'Prefer':        'resolution=merge-duplicates',
-      },
-      body: JSON.stringify(payload),
-    });
-    setSyncStatus(res.ok ? 'synced' : 'error');
-  } catch {
-    setSyncStatus('error');
-  }
-}
-async function loadFromSupabase() {
-  if (!USE_SUPABASE) return;
-  setSyncStatus('syncing');
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/habit_logs?date=eq.${todayKey()}&select=log`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
-    );
-    if (res.ok) {
-      const data = await res.json();
-      if (data.length > 0 && data[0].log) {
-        log = data[0].log;
-        saveTodayLog(log);
-      }
-    }
-    setSyncStatus('synced');
-  } catch {
-    setSyncStatus('error');
-  }
-}
-
-// ── Navigation (stub — build out in v2) ─────────────────────────
-function navigate(tab) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  if (tab !== 'today') {
-    showToast(`${tab.charAt(0).toUpperCase() + tab.slice(1)} view coming in v2`);
-  }
-}
-
-// ── Toast ─────────────────────────────────────────────────────────
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-// ── Midnight reset ────────────────────────────────────────────────
-function scheduleMidnightReset() {
-  const now       = new Date();
-  const midnight  = new Date(now);
-  midnight.setDate(now.getDate() + 1);
-  midnight.setHours(0, 0, 5, 0); // 5 seconds past midnight
-  const msUntil   = midnight - now;
-  setTimeout(() => {
-    log = {};
-    renderAll();
-    scheduleMidnightReset();
-  }, msUntil);
-}
-
-// ── Init ──────────────────────────────────────────────────────────
-async function init() {
-  await loadFromSupabase();
-  renderAll();
-  scheduleMidnightReset();
-  document.getElementById('loading').classList.add('hidden');
-}
-
-init();
-</script>
-
-<!-- Service worker registration -->
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(regs => {
-    regs.forEach(reg => reg.unregister());
-  });
-}
-</script>
-
-</body>
-</html>
+function renderWeekStats(days,today){
+  const ids=allIds(), past=days.filter(d=>dateKey(d)<=today);
+  let tot=0,done=0;
+  past.forEach(d=>{ const l=loadLog(dateKey(d)); tot+=ids.length; done+=ids.filter(id=>l[id]).length; });
+  const score=tot?Math.round(done/tot*100):0;
+  const lm=new Date(viewMonday); lm.setDate(viewMonday.getDate()-7);
+  const last=weekScoreFor(lm), diff=score-last;
+  document.getElementById('w-score').textContent=score+'%';
+  document.getElementById('w-done').textContent=done;
+  const ve=document.getElementById('w-vs');
+  ve.textContent=diff===0?'—':diff>0?`+${diff}%`:`${diff}%`;
+  ve.style.color=diff>0?'#3B6D11':diff<0?
