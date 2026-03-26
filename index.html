@@ -251,7 +251,6 @@
     .task-week-toggle.on { background: #EF9F27; border-color: #EF9F27; justify-content: flex-end; }
     .task-week-toggle .twt-thumb { width: 10px; height: 10px; border-radius: 50%; background: var(--border2); transition: all .15s; }
     .task-week-toggle.on .twt-thumb { background: #fff; }
-
   </style>
 </head>
 <body>
@@ -717,6 +716,19 @@ function shiftWeek(dir){
 }
 
 
+// Task state stored in localStorage keyed by task id
+function loadTaskDone(taskId) {
+  return localStorage.getItem('task-' + taskId) === 'true';
+}
+function saveTaskDone(taskId, done) {
+  localStorage.setItem('task-' + taskId, done ? 'true' : 'false');
+}
+
+// Merge config tasks with localStorage state
+function getTasksDone(project) {
+  return project.tasks.map(t => ({...t, done: loadTaskDone(t.id)}));
+}
+
 // ── This-week task flags ──────────────────────────────────────
 function loadThisWeek(taskId){ return localStorage.getItem('thisweek-'+taskId)==='true'; }
 function saveThisWeek(taskId, on){ localStorage.setItem('thisweek-'+taskId, on?'true':'false'); }
@@ -833,25 +845,11 @@ async function init(){
   document.getElementById('loading').classList.add('hidden');
 }
 init();
-</script>
 
-<script>
 // ══════════════════════════════════════════════════════════════
 // PROJECTS
 // ══════════════════════════════════════════════════════════════
 
-// Task state stored in localStorage keyed by task id
-function loadTaskDone(taskId) {
-  return localStorage.getItem('task-' + taskId) === 'true';
-}
-function saveTaskDone(taskId, done) {
-  localStorage.setItem('task-' + taskId, done ? 'true' : 'false');
-}
-
-// Merge config tasks with localStorage state
-function getTasksDone(project) {
-  return project.tasks.map(t => ({...t, done: loadTaskDone(t.id)}));
-}
 
 let projFilter = 'all';
 
