@@ -175,7 +175,84 @@
     .spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: #534AB7; border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     #loading p { font-size: 13px; color: var(--text3); }
-  </style>
+
+    /* ── Projects ─────────────────────────────────────────────── */
+    .proj-top-bar { padding: 10px 16px; border-bottom: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; }
+    .proj-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .proj-view-title { font-size: 18px; font-weight: 600; color: var(--text); }
+    .filter-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .fchip { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 10px; border: 0.5px solid var(--border2); color: var(--text2); white-space: nowrap; cursor: pointer; background: var(--bg); transition: all .15s; -webkit-tap-highlight-color: transparent; }
+    .fchip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .role-group { margin: 10px 14px 0; }
+    .role-group-header { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+    .role-group-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .role-group-name { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; }
+    .role-group-count { font-size: 10px; color: var(--text3); }
+    .proj-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; }
+    .proj-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .proj-card-left { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
+    .proj-icon { width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .proj-info { min-width: 0; flex: 1; }
+    .proj-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .proj-meta { font-size: 10px; color: var(--text3); margin-top: 1px; }
+    .proj-card-right { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+    .status-pill { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 8px; }
+    .s-active { background: #EAF3DE; color: #27500A; }
+    .s-paused { background: #FAEEDA; color: #633806; }
+    .s-done   { background: #E1F5EE; color: #085041; }
+    .s-deck   { background: var(--bg2); color: var(--text2); }
+    @media (prefers-color-scheme: dark) {
+      .s-active { background: #173404; color: #C0DD97; }
+      .s-paused { background: #412402; color: #FAC775; }
+      .s-done   { background: #04342C; color: #9FE1CB; }
+    }
+    .proj-chevron { font-size: 11px; color: var(--text3); transition: transform .2s; display: inline-block; }
+    .proj-chevron.open { transform: rotate(90deg); }
+    .proj-card-body { border-top: 0.5px solid var(--border); }
+    .proj-card.collapsed .proj-card-body { display: none; }
+    .proj-progress { padding: 7px 12px 4px; }
+    .proj-prog-bg { height: 3px; background: var(--border2); border-radius: 2px; }
+    .proj-prog-fill { height: 3px; border-radius: 2px; transition: width .3s; }
+    .proj-prog-lbl { font-size: 10px; color: var(--text3); margin-top: 3px; }
+    .task-row { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .task-row:last-of-type { border-bottom: none; }
+    .task-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .12s; }
+    .task-check.done { border-color: transparent; }
+    .task-check.done::after { content: ''; width: 9px; height: 5px; border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(-45deg) translateY(-1px); display: block; }
+    .task-text { font-size: 13px; color: var(--text); flex: 1; }
+    .task-text.done { color: var(--text3); text-decoration: line-through; }
+    .task-due { font-size: 10px; color: var(--text3); white-space: nowrap; }
+    .task-due.soon { color: #BA7517; }
+    .add-task-row { display: flex; align-items: center; gap: 9px; padding: 7px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-top: 0.5px solid var(--border); }
+    .add-task-icon { width: 18px; height: 18px; border-radius: 4px; border: 1.5px dashed var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 14px; line-height: 1; }
+    .add-task-text { font-size: 13px; color: var(--text3); }
+    .new-task-wrap { display: none; padding: 6px 12px 8px; border-top: 0.5px solid var(--border); align-items: center; gap: 8px; }
+    .new-task-wrap.visible { display: flex; }
+    .new-task-input { flex: 1; font-size: 13px; border: none; outline: none; background: transparent; color: var(--text); }
+    .new-task-input::placeholder { color: var(--text3); }
+    .new-task-save { font-size: 12px; font-weight: 500; color: #534AB7; cursor: pointer; padding: 4px 6px; -webkit-tap-highlight-color: transparent; }
+    /* ── Focus section (Today) ──────────────────────────────────── */
+    .focus-block { margin: 10px 14px 0; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .focus-header { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 0.5px solid var(--border); }
+    .focus-dot { width: 9px; height: 9px; border-radius: 2px; background: #EF9F27; flex-shrink: 0; }
+    .focus-title { font-size: 14px; font-weight: 500; color: var(--text); }
+    .focus-count { font-size: 11px; color: var(--text3); margin-left: 4px; }
+    .focus-empty { padding: 10px 12px; font-size: 12px; color: var(--text3); }
+    .focus-task-row { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .focus-task-row:last-child { border-bottom: none; }
+    .focus-role-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+    .focus-task-name { font-size: 13px; color: var(--text); flex: 1; }
+    .focus-task-name.done { color: var(--text3); text-decoration: line-through; }
+    .focus-task-proj { font-size: 10px; color: var(--text3); white-space: nowrap; }
+
+    /* ── This week toggle on tasks ──────────────────────────────── */
+    .task-week-toggle { width: 28px; height: 16px; border-radius: 8px; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; padding: 1px; transition: all .15s; cursor: pointer; }
+    .task-week-toggle.on { background: #EF9F27; border-color: #EF9F27; justify-content: flex-end; }
+    .task-week-toggle .twt-thumb { width: 10px; height: 10px; border-radius: 50%; background: var(--border2); transition: all .15s; }
+    .task-week-toggle.on .twt-thumb { background: #fff; }
+
+
 </head>
 <body>
 
@@ -198,6 +275,14 @@
         <div class="stat-chip"><div class="stat-num" id="stat-week">—%</div><div class="stat-lbl">week score</div></div>
         <div class="stat-chip"><div class="stat-num" id="stat-quarter" style="color:#3B6D11;">Q1</div><div class="stat-lbl">on track</div></div>
       </div>
+    </div>
+    <div id="focus-block" class="focus-block" style="display:none;">
+      <div class="focus-header">
+        <div class="focus-dot"></div>
+        <span class="focus-title">This week's focus</span>
+        <span class="focus-count" id="focus-count"></span>
+      </div>
+      <div id="focus-list"></div>
     </div>
     <div class="big3-block">
       <div class="big3-title">THIS WEEK'S BIG 3</div>
@@ -238,6 +323,26 @@
       <div class="week-sec-label">DAY BY DAY</div>
       <div class="day-score-row" id="day-score-row"></div>
     </div>
+  </div>
+
+
+  <!-- PROJECTS screen -->
+  <div id="screen-projects" class="screen">
+    <div class="proj-top-bar">
+      <div class="proj-top-row">
+        <div class="proj-view-title">Projects</div>
+        <button onclick="showNewProjectDialog()" style="font-size:11px;padding:5px 12px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);cursor:pointer;">+ New</button>
+      </div>
+      <div class="filter-row" id="proj-filters">
+        <div class="fchip active" data-filter="all">All</div>
+        <div class="fchip" data-filter="work">Work</div>
+        <div class="fchip" data-filter="self">Self</div>
+        <div class="fchip" data-filter="life">Life</div>
+        <div class="fchip" data-filter="active">Active</div>
+        <div class="fchip" data-filter="done">Done</div>
+      </div>
+    </div>
+    <div id="projects-container"></div>
   </div>
 
   <!-- Bottom nav -->
@@ -287,6 +392,77 @@ const CONFIG = {
     { id: "b1", text: "Complete InfoComm talk outline" },
     { id: "b2", text: "PMP — finish chapter 4 + practice quiz" },
     { id: "b3", text: "Date night with Becky (Friday)" },
+  ],
+
+  // Projects — add your real projects here
+  // roles: "work" | "self" | "life"
+  // status: "active" | "paused" | "done" | "deck"
+  projects: [
+    {
+      id: "infocomm", name: "InfoComm 2026 talk", role: "work",
+      status: "active", meta: "Goal: Thought leadership · Jun 2026",
+      color: "#185FA5", colorLight: "#E6F1FB", collapsed: false,
+      tasks: [
+        { id: "ic1", text: "Submit speaker bio + abstract",   done: true,  due: "" },
+        { id: "ic2", text: "Draft talk outline",              done: true,  due: "" },
+        { id: "ic3", text: "Identify key stories / examples", done: true,  due: "" },
+        { id: "ic4", text: "Build slide deck",                done: false, due: "May" },
+        { id: "ic5", text: "Practice run-through x3",         done: false, due: "Jun" },
+      ]
+    },
+    {
+      id: "avreport", name: "AV Value Report tool", role: "work",
+      status: "active", meta: "Goal: Ops excellence · Ongoing",
+      color: "#185FA5", colorLight: "#E6F1FB", collapsed: true,
+      tasks: [
+        { id: "av1", text: "Fix UTC timezone bug",             done: true,  due: "" },
+        { id: "av2", text: "Dynamic currency formatting",      done: true,  due: "" },
+        { id: "av3", text: "Drag-and-drop file upload",        done: true,  due: "" },
+        { id: "av4", text: "Email methodology summary",        done: true,  due: "" },
+        { id: "av5", text: "Space utilization analysis tab",   done: false, due: "Soon" },
+      ]
+    },
+    {
+      id: "pmp", name: "PMP certification", role: "self",
+      status: "active", meta: "Goal: Career growth · Jun 2026",
+      color: "#BA7517", colorLight: "#FAEEDA", collapsed: false,
+      tasks: [
+        { id: "pm1", text: "Register for exam",               done: true,  due: "" },
+        { id: "pm2", text: "Chapters 1–3 + practice Qs",      done: true,  due: "" },
+        { id: "pm3", text: "Chapter 4 — Project Integration",  done: false, due: "This week" },
+        { id: "pm4", text: "Chapters 5–9 + practice tests",    done: false, due: "Apr–May" },
+        { id: "pm5", text: "Full mock exam x2",                done: false, due: "May" },
+      ]
+    },
+    {
+      id: "python", name: "Python — 12-week path", role: "self",
+      status: "paused", meta: "Goal: Maker skills · Q2 2026",
+      color: "#BA7517", colorLight: "#FAEEDA", collapsed: true,
+      tasks: [
+        { id: "py1", text: "Weeks 1–2: basics + data types",  done: true,  due: "" },
+        { id: "py2", text: "Week 3: functions + file I/O",     done: false, due: "After PMP" },
+        { id: "py3", text: "Weeks 4–8: OOP + projects",        done: false, due: "Q2" },
+      ]
+    },
+    {
+      id: "living", name: "Living portrait concept", role: "self",
+      status: "deck", meta: "Goal: Side income · Q3 2026",
+      color: "#BA7517", colorLight: "#FAEEDA", collapsed: true,
+      tasks: [
+        { id: "lp1", text: "Define service concept + pricing", done: true,  due: "" },
+        { id: "lp2", text: "Create 3 sample portraits",        done: false, due: "Q2" },
+        { id: "lp3", text: "Build simple landing page",        done: false, due: "Q2" },
+      ]
+    },
+    {
+      id: "finances", name: "Finances Q2 review", role: "life",
+      status: "deck", meta: "Goal: Life stability · Apr 2026",
+      color: "#5F5E5A", colorLight: "#F1EFE8", collapsed: true,
+      tasks: [
+        { id: "fi1", text: "Review Q1 spending vs budget",     done: false, due: "Apr 1" },
+        { id: "fi2", text: "Car maintenance schedule check",   done: false, due: "Apr" },
+      ]
+    },
   ],
   sections: [
     { id: "faith", name: "Faith", color: "#534AB7", colorLight: "#EEEDFE", collapsed: false,
@@ -347,7 +523,10 @@ function getWeekDays(monday) {
 }
 function weekLabel(monday) {
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `Week of ${months[monday.getMonth()]} ${monday.getDate()}`;
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+  const startStr = `${months[monday.getMonth()]} ${monday.getDate()}`;
+  const endStr   = `${months[sunday.getMonth()]} ${sunday.getDate()}`;
+  return `Week of ${startStr} – ${endStr}`;
 }
 function quarterWeekLabel(d) {
   const jan1 = new Date(d.getFullYear(),0,1);
@@ -437,7 +616,7 @@ function renderTodayStats(){
   document.getElementById('stat-streak').textContent=best;
   document.getElementById('stat-week').textContent=weekScoreFor(getMondayOf(new Date()))+'%';
 }
-function renderToday(){ renderGreeting(); renderBig3(); renderSections(); renderTodayStats(); }
+function renderToday(){ renderGreeting(); renderFocus(); renderBig3(); renderSections(); renderTodayStats(); }
 
 function toggleHabit(id,color){
   todayLog[id]=!todayLog[id]; saveLog(todayKey(),todayLog);
@@ -537,6 +716,58 @@ function shiftWeek(dir){
   renderWeekView();
 }
 
+
+// ── This-week task flags ──────────────────────────────────────
+function loadThisWeek(taskId){ return localStorage.getItem('thisweek-'+taskId)==='true'; }
+function saveThisWeek(taskId, on){ localStorage.setItem('thisweek-'+taskId, on?'true':'false'); }
+
+// ── Focus section (Today screen) ─────────────────────────────
+function renderFocus(){
+  const list = document.getElementById('focus-list');
+  const block = document.getElementById('focus-block');
+  const countEl = document.getElementById('focus-count');
+  list.innerHTML = '';
+
+  const roleColors = { work:'#185FA5', self:'#BA7517', life:'#888780' };
+
+  // Collect all flagged tasks across all projects
+  const focused = [];
+  CONFIG.projects.forEach(proj => {
+    proj.tasks.forEach(task => {
+      if(loadThisWeek(task.id)){
+        focused.push({ task, proj });
+      }
+    });
+  });
+
+  if(!focused.length){
+    block.style.display = 'none';
+    return;
+  }
+
+  block.style.display = '';
+  countEl.textContent = focused.filter(f => !loadTaskDone(f.task.id)).length + ' remaining';
+
+  focused.forEach(({task, proj}) => {
+    const done = loadTaskDone(task.id);
+    const row = document.createElement('div');
+    row.className = 'focus-task-row';
+    row.innerHTML = `
+      <div class="hcheck ${done?'done':''}" style="width:22px;height:22px;${done?`background:${proj.color};`:''}"></div>
+      <div class="focus-role-dot" style="background:${proj.color};"></div>
+      <span class="focus-task-name ${done?'done':''}">${task.text}</span>
+      <span class="focus-task-proj">${proj.name}</span>`;
+    row.addEventListener('click', () => {
+      const nowDone = !loadTaskDone(task.id);
+      saveTaskDone(task.id, nowDone);
+      renderFocus();
+      // Also refresh projects if visible
+      if(document.getElementById('screen-projects').classList.contains('active')) renderProjects();
+    });
+    list.appendChild(row);
+  });
+}
+
 // ── Navigation ────────────────────────────────────────────────
 function navigate(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -547,6 +778,7 @@ function navigate(tab){
   else{ document.getElementById('screen-today').classList.add('active'); document.getElementById('nav-today').classList.add('active'); showToast(`${tab.charAt(0).toUpperCase()+tab.slice(1)} view coming soon`); return; }
   if(nav) nav.classList.add('active');
   if(tab==='week') renderWeekView();
+  if(tab==='projects') renderProjects();
 }
 
 // ── Supabase ──────────────────────────────────────────────────
@@ -604,6 +836,238 @@ init();
 </script>
 
 <script>
+// ══════════════════════════════════════════════════════════════
+// PROJECTS
+// ══════════════════════════════════════════════════════════════
+
+// Task state stored in localStorage keyed by task id
+function loadTaskDone(taskId) {
+  return localStorage.getItem('task-' + taskId) === 'true';
+}
+function saveTaskDone(taskId, done) {
+  localStorage.setItem('task-' + taskId, done ? 'true' : 'false');
+}
+
+// Merge config tasks with localStorage state
+function getTasksDone(project) {
+  return project.tasks.map(t => ({...t, done: loadTaskDone(t.id)}));
+}
+
+let projFilter = 'all';
+
+function renderProjects() {
+  const container = document.getElementById('projects-container');
+  container.innerHTML = '';
+
+  const roleGroups = [
+    { id: 'work', label: 'WORK PROJECTS', color: '#185FA5' },
+    { id: 'self', label: 'SELF PROJECTS', color: '#BA7517' },
+    { id: 'life', label: 'LIFE MAINTENANCE', color: '#888780' },
+  ];
+
+  roleGroups.forEach(group => {
+    let projects = CONFIG.projects.filter(p => p.role === group.id);
+
+    // Apply filter
+    if (projFilter === 'work' || projFilter === 'self' || projFilter === 'life') {
+      if (group.id !== projFilter) return;
+    }
+    if (projFilter === 'active') {
+      projects = projects.filter(p => p.status === 'active');
+    }
+    if (projFilter === 'done') {
+      projects = projects.filter(p => p.status === 'done');
+    }
+    if (!projects.length) return;
+
+    const activeCount = projects.filter(p => p.status === 'active').length;
+    const groupEl = document.createElement('div');
+    groupEl.className = 'role-group';
+    groupEl.innerHTML = `<div class="role-group-header">
+      <div class="role-group-dot" style="background:${group.color};"></div>
+      <div class="role-group-name">${group.label}</div>
+      <div class="role-group-count">${activeCount} active</div>
+    </div>`;
+
+    projects.forEach(proj => {
+      groupEl.appendChild(buildProjectCard(proj));
+    });
+
+    container.appendChild(groupEl);
+  });
+}
+
+function buildProjectCard(proj) {
+  const tasks    = getTasksDone(proj);
+  const done     = tasks.filter(t => t.done).length;
+  const total    = tasks.length;
+  const pct      = total ? Math.round(done / total * 100) : 0;
+  const collapsed = proj._collapsed !== undefined ? proj._collapsed : proj.collapsed;
+
+  const statusLabels = { active:'Active', paused:'Paused', done:'Done', deck:'On deck' };
+  const statusClass  = { active:'s-active', paused:'s-paused', done:'s-done', deck:'s-deck' };
+
+  const card = document.createElement('div');
+  card.className = `proj-card${collapsed ? ' collapsed' : ''}`;
+  card.id = 'proj-' + proj.id;
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'proj-card-header';
+  header.innerHTML = `
+    <div class="proj-card-left">
+      <div class="proj-icon" style="background:${proj.colorLight};">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="2" width="12" height="9" rx="1.5" stroke="${proj.color}" stroke-width="1.2"/>
+          <line x1="3" y1="5" x2="11" y2="5" stroke="${proj.color}" stroke-width="1"/>
+          <line x1="3" y1="7.5" x2="8" y2="7.5" stroke="${proj.color}" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="proj-info">
+        <div class="proj-name">${proj.name}</div>
+        <div class="proj-meta">${proj.meta}</div>
+      </div>
+    </div>
+    <div class="proj-card-right">
+      <span class="status-pill ${statusClass[proj.status]}">${statusLabels[proj.status]}</span>
+      <span class="proj-chevron ${collapsed ? '' : 'open'}">&#9654;</span>
+    </div>`;
+  header.addEventListener('click', () => {
+    proj._collapsed = !card.classList.contains('collapsed');
+    card.classList.toggle('collapsed');
+    header.querySelector('.proj-chevron').classList.toggle('open');
+  });
+  card.appendChild(header);
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'proj-card-body';
+
+  // Progress bar
+  const prog = document.createElement('div');
+  prog.className = 'proj-progress';
+  prog.innerHTML = `
+    <div class="proj-prog-bg">
+      <div class="proj-prog-fill" id="prog-fill-${proj.id}" style="width:${pct}%;background:${proj.color};"></div>
+    </div>
+    <div class="proj-prog-lbl" id="prog-lbl-${proj.id}">${done} of ${total} tasks done</div>`;
+  body.appendChild(prog);
+
+  // Tasks
+  tasks.forEach(task => {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    const soonClass = task.due && (task.due.toLowerCase().includes('week') || task.due === 'Soon' || task.due.includes('Apr')) ? 'soon' : '';
+    const thisWeekOn = loadThisWeek(task.id);
+    row.innerHTML = `
+      <div class="task-check ${task.done ? 'done' : ''}" style="${task.done ? `background:${proj.color};` : ''}"></div>
+      <span class="task-text ${task.done ? 'done' : ''}">${task.text}</span>
+      ${task.due ? `<span class="task-due ${soonClass}">${task.due}</span>` : ''}
+      <div class="task-week-toggle ${thisWeekOn ? 'on' : ''}" title="Add to this week's focus"><div class="twt-thumb"></div></div>`;
+    const toggle = row.querySelector('.task-week-toggle');
+    toggle.addEventListener('click', e => {
+      e.stopPropagation();
+      const nowOn = !toggle.classList.contains('on');
+      saveThisWeek(task.id, nowOn);
+      toggle.classList.toggle('on', nowOn);
+      // Refresh today focus if today screen visible
+      if(document.getElementById('screen-today').classList.contains('active')) renderFocus();
+    });
+    row.addEventListener('click', () => toggleTask(task.id, proj.id, proj.color, row));
+    body.appendChild(row);
+  });
+
+  // Add task row
+  const addRow = document.createElement('div');
+  addRow.className = 'add-task-row';
+  addRow.innerHTML = `<div class="add-task-icon">+</div><span class="add-task-text">Add task…</span>`;
+
+  const inputWrap = document.createElement('div');
+  inputWrap.className = 'new-task-wrap';
+  inputWrap.innerHTML = `
+    <input class="new-task-input" placeholder="New task…" type="text"/>
+    <span class="new-task-save">Save</span>`;
+
+  addRow.addEventListener('click', () => {
+    addRow.style.display = 'none';
+    inputWrap.classList.add('visible');
+    inputWrap.querySelector('.new-task-input').focus();
+  });
+
+  const saveNewTask = () => {
+    const input = inputWrap.querySelector('.new-task-input');
+    const text = input.value.trim();
+    if (text) {
+      const newId = proj.id + '-t' + Date.now();
+      proj.tasks.push({ id: newId, text, done: false, due: '' });
+      saveTaskDone(newId, false);
+    }
+    input.value = '';
+    inputWrap.classList.remove('visible');
+    addRow.style.display = '';
+    renderProjects();
+  };
+
+  inputWrap.querySelector('.new-task-save').addEventListener('click', saveNewTask);
+  inputWrap.querySelector('.new-task-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveNewTask();
+    if (e.key === 'Escape') {
+      inputWrap.classList.remove('visible');
+      addRow.style.display = '';
+    }
+  });
+
+  body.appendChild(addRow);
+  body.appendChild(inputWrap);
+  card.appendChild(body);
+  return card;
+}
+
+function toggleTask(taskId, projId, color, rowEl) {
+  const check = rowEl.querySelector('.task-check');
+  const text  = rowEl.querySelector('.task-text');
+  const isDone = check.classList.contains('done');
+  const newDone = !isDone;
+  saveTaskDone(taskId, newDone);
+  check.classList.toggle('done', newDone);
+  text.classList.toggle('done', newDone);
+  check.style.background = newDone ? color : '';
+  check.style.borderColor = newDone ? 'transparent' : '';
+  updateProjectProgress(projId, color);
+}
+
+function updateProjectProgress(projId, color) {
+  const proj  = CONFIG.projects.find(p => p.id === projId);
+  if (!proj) return;
+  const tasks = getTasksDone(proj);
+  const done  = tasks.filter(t => t.done).length;
+  const total = tasks.length;
+  const pct   = total ? Math.round(done / total * 100) : 0;
+  const fill  = document.getElementById('prog-fill-' + projId);
+  const lbl   = document.getElementById('prog-lbl-' + projId);
+  if (fill) { fill.style.width = pct + '%'; fill.style.background = color; }
+  if (lbl)  lbl.textContent = done + ' of ' + total + ' tasks done';
+}
+
+function setFilter(filter) {
+  projFilter = filter;
+  document.querySelectorAll('.fchip').forEach(el => {
+    el.classList.toggle('active', el.dataset.filter === filter);
+  });
+  renderProjects();
+}
+
+function showNewProjectDialog() {
+  showToast('Project creation coming in next update');
+}
+
+// Wire up filter chips
+document.getElementById('proj-filters').addEventListener('click', e => {
+  if (e.target.classList.contains('fchip')) {
+    setFilter(e.target.dataset.filter);
+  }
+});
+
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
 }
