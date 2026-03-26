@@ -584,7 +584,7 @@ function renderBig3(){
     const done=!!b3done[item.id], row=document.createElement('div');
     row.className='big3-item';
     row.innerHTML=`<div class="b3-box ${done?'done':''}"></div><span class="b3-text ${done?'done':''}">${item.text}</span>`;
-    row.addEventListener('click',()=>{ b3done[item.id]=!b3done[item.id]; saveB3(b3done); renderBig3(); renderWeekBig3(); });
+    row.addEventListener('click',()=>{ b3done[item.id]=!b3done[item.id]; saveB3(b3done); syncBig3State(); renderBig3(); renderWeekBig3(); });
     el.appendChild(row);
   });
 }
@@ -772,6 +772,7 @@ function renderFocus(){
     row.addEventListener('click', () => {
       const nowDone = !loadTaskDone(task.id);
       saveTaskDone(task.id, nowDone);
+      syncTaskDoneState();
       renderFocus();
       // Also refresh projects if visible
       if(document.getElementById('screen-projects').classList.contains('active')) renderProjects();
@@ -795,6 +796,8 @@ function navigate(tab){
 
 // ── Supabase ──────────────────────────────────────────────────
 function setSyncStatus(s){ document.getElementById('sync-dot').className=s; }
+
+// Habit log sync (per day)
 async function syncLog(dk,log){
   if(!USE_SUPABASE) return;
   setSyncStatus('syncing');
@@ -807,13 +810,78 @@ async function syncLog(dk,log){
     setSyncStatus(res.ok?'synced':'error');
   }catch{ setSyncStatus('error'); }
 }
+
+// App state sync (tasks, thisweek flags, big3)
+// Stores everything in a single app_state table row per key
+async function syncAppState(key, value){
+  if(!USE_SUPABASE) return;
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({key, value, updated_at:new Date().toISOString()})
+    });
+  }catch(e){ console.log('State sync error:', e); }
+}
+
+async function loadAppStateFromSupabase(){
+  if(!USE_SUPABASE) return;
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/app_state?select=key,value`,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
+    if(!res.ok) return;
+    const rows=await res.json();
+    rows.forEach(row=>{
+      if(row.key==='task_done' && row.value){
+        Object.entries(row.value).forEach(([id,done])=>{ localStorage.setItem('task-'+id, done?'true':'false'); });
+      }
+      if(row.key==='thisweek' && row.value){
+        Object.entries(row.value).forEach(([id,on])=>{ localStorage.setItem('thisweek-'+id, on?'true':'false'); });
+      }
+      if(row.key==='big3' && row.value){
+        // Store as big3-WEEKKEY
+        const wk=weekKey();
+        const existing=loadB3();
+        const merged=Object.assign({},row.value,existing);
+        localStorage.setItem('big3-'+wk, JSON.stringify(merged));
+      }
+    });
+  }catch(e){ console.log('Load state error:', e); }
+}
+
+// Collect all task_done states and push to Supabase
+function syncTaskDoneState(){
+  const state={};
+  CONFIG.projects.forEach(proj=>{
+    proj.tasks.forEach(t=>{ state[t.id]=loadTaskDone(t.id); });
+  });
+  syncAppState('task_done', state);
+}
+
+// Collect all thisweek flags and push to Supabase
+function syncThisWeekState(){
+  const state={};
+  CONFIG.projects.forEach(proj=>{
+    proj.tasks.forEach(t=>{ state[t.id]=loadThisWeek(t.id); });
+  });
+  syncAppState('thisweek', state);
+}
+
+// Sync big3 done state
+function syncBig3State(){
+  syncAppState('big3', loadB3());
+}
+
 async function loadFromSupabase(){
   if(!USE_SUPABASE) return;
   setSyncStatus('syncing');
   try{
+    // Load habit log for today
     const res=await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?date=eq.${todayKey()}&select=log`,
       {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
     if(res.ok){ const d=await res.json(); if(d.length&&d[0].log){ todayLog=d[0].log; saveLog(todayKey(),todayLog); } }
+    // Load app state (tasks, thisweek, big3)
+    await loadAppStateFromSupabase();
     setSyncStatus('synced');
   }catch{ setSyncStatus('error'); }
 }
@@ -968,6 +1036,7 @@ function buildProjectCard(proj) {
       const nowOn = !toggle.classList.contains('on');
       saveThisWeek(task.id, nowOn);
       toggle.classList.toggle('on', nowOn);
+      syncThisWeekState();
       // Refresh today focus if today screen visible
       if(document.getElementById('screen-today').classList.contains('active')) renderFocus();
     });
@@ -1032,6 +1101,7 @@ function toggleTask(taskId, projId, color, rowEl) {
   check.style.background = newDone ? color : '';
   check.style.borderColor = newDone ? 'transparent' : '';
   updateProjectProgress(projId, color);
+  syncTaskDoneState();
 }
 
 function updateProjectProgress(projId, color) {
