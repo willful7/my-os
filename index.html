@@ -224,6 +224,14 @@
     .task-text.done { color: var(--text3); text-decoration: line-through; }
     .task-due { font-size: 10px; color: var(--text3); white-space: nowrap; }
     .task-due.soon { color: #BA7517; }
+    /* ── Editable due labels & status ───────────────────────── */
+    .task-due { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .task-due:hover { opacity: 0.7; }
+    .task-due-empty { font-size: 10px; color: var(--border2); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .task-due-input { font-size: 10px; width: 56px; border: none; border-bottom: 1px solid #BA7517; background: transparent; color: #BA7517; outline: none; padding: 1px 0; }
+    .status-pill { cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
+    .status-pill:active { opacity: 0.75; }
+
     .add-task-row { display: flex; align-items: center; gap: 9px; padding: 7px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-top: 0.5px solid var(--border); }
     .add-task-icon { width: 18px; height: 18px; border-radius: 4px; border: 1.5px dashed var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 14px; line-height: 1; }
     .add-task-text { font-size: 13px; color: var(--text3); }
@@ -958,6 +966,40 @@ function getAllTasks(proj){
   return [...proj.tasks, ...custom];
 }
 
+
+// ── Project status & task due persistence ─────────────────────
+function projStatusKey(projId){ return 'proj-status-' + projId; }
+function taskDueKey(taskId){ return 'task-due-' + taskId; }
+
+function loadProjStatus(proj){
+  return localStorage.getItem(projStatusKey(proj.id)) || proj.status;
+}
+function saveProjStatus(projId, status){
+  localStorage.setItem(projStatusKey(projId), status);
+  syncAppState('proj-statuses', loadAllProjStatuses());
+}
+function loadAllProjStatuses(){
+  const out = {};
+  CONFIG.projects.forEach(p => { out[p.id] = loadProjStatus(p); });
+  return out;
+}
+
+function loadTaskDue(task){
+  const stored = localStorage.getItem(taskDueKey(task.id));
+  return stored !== null ? stored : (task.due || '');
+}
+function saveTaskDue(taskId, due){
+  localStorage.setItem(taskDueKey(taskId), due);
+  syncAllTaskDues();
+}
+function syncAllTaskDues(){
+  const out = {};
+  CONFIG.projects.forEach(proj => {
+    getAllTasks(proj).forEach(t => { out[t.id] = loadTaskDue(t); });
+  });
+  syncAppState('task-dues', out);
+}
+
 // ── Navigation ────────────────────────────────────────────────
 function navigate(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1031,6 +1073,19 @@ async function loadAppStateFromSupabase(){
     });
     // Merge custom tasks from Supabase into localStorage
     mergeCustomTasksFromState(rows);
+    // Load project statuses
+    rows.forEach(row => {
+      if(row.key === 'proj-statuses' && row.value){
+        Object.entries(row.value).forEach(([id, status]) => {
+          localStorage.setItem('proj-status-' + id, status);
+        });
+      }
+      if(row.key === 'task-dues' && row.value){
+        Object.entries(row.value).forEach(([id, due]) => {
+          localStorage.setItem('task-due-' + id, due);
+        });
+      }
+    });
   }catch(e){ console.log('Load state error:', e); }
 }
 
@@ -1188,6 +1243,10 @@ function buildProjectCard(proj) {
 
   const statusLabels = { active:'Active', paused:'Paused', done:'Done', deck:'On deck' };
   const statusClass  = { active:'s-active', paused:'s-paused', done:'s-done', deck:'s-deck' };
+  const statusOrder  = ['active','paused','deck','done'];
+
+  // Use stored status if available
+  const currentStatus = loadProjStatus(proj);
 
   const card = document.createElement('div');
   card.className = `proj-card${collapsed ? ' collapsed' : ''}`;
@@ -1211,14 +1270,28 @@ function buildProjectCard(proj) {
       </div>
     </div>
     <div class="proj-card-right">
-      <span class="status-pill ${statusClass[proj.status]}">${statusLabels[proj.status]}</span>
+      <span class="status-pill ${statusClass[currentStatus]}" id="status-pill-${proj.id}">${statusLabels[currentStatus]}</span>
       <span class="proj-chevron ${collapsed ? '' : 'open'}">&#9654;</span>
     </div>`;
-  header.addEventListener('click', () => {
+  header.addEventListener('click', (e) => {
+    // Don't collapse if tapping the status pill
+    if(e.target.classList.contains('status-pill')) return;
     proj._collapsed = !card.classList.contains('collapsed');
     card.classList.toggle('collapsed');
     header.querySelector('.proj-chevron').classList.toggle('open');
   });
+
+  // Status pill cycles through statuses on tap
+  const pill = header.querySelector('.status-pill');
+  pill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const cur = loadProjStatus(proj);
+    const next = statusOrder[(statusOrder.indexOf(cur) + 1) % statusOrder.length];
+    saveProjStatus(proj.id, next);
+    pill.textContent = statusLabels[next];
+    pill.className = 'status-pill ' + statusClass[next];
+  });
+
   card.appendChild(header);
 
   // Body
@@ -1241,10 +1314,12 @@ function buildProjectCard(proj) {
     row.className = 'task-row';
     const soonClass = task.due && (task.due.toLowerCase().includes('week') || task.due === 'Soon' || task.due.includes('Apr')) ? 'soon' : '';
     const thisWeekOn = loadThisWeek(task.id);
+    const storedDue = loadTaskDue(task);
+    const dueSoonClass = storedDue && (storedDue.toLowerCase().includes('week') || storedDue === 'Soon' || storedDue.includes('Apr')) ? 'soon' : '';
     row.innerHTML = `
       <div class="task-check ${task.done ? 'done' : ''}" style="${task.done ? `background:${proj.color};` : ''}"></div>
       <span class="task-text ${task.done ? 'done' : ''}">${task.text}</span>
-      ${task.due ? `<span class="task-due ${soonClass}">${task.due}</span>` : ''}
+      ${storedDue ? `<span class="task-due ${dueSoonClass}" title="Tap to edit">${storedDue}</span>` : `<span class="task-due-empty" title="Add due date">+</span>`}
       <div class="task-week-toggle ${thisWeekOn ? 'on' : ''}" title="Add to this week's focus"><div class="twt-thumb"></div></div>`;
     const toggle = row.querySelector('.task-week-toggle');
     toggle.addEventListener('click', e => {
@@ -1256,6 +1331,43 @@ function buildProjectCard(proj) {
       renderFocus(); // Always update focus list regardless of active screen
     });
     row.addEventListener('click', () => toggleTask(task.id, proj.id, proj.color, row));
+
+    // Due label inline edit
+    const dueEl = row.querySelector('.task-due, .task-due-empty');
+    if(dueEl){
+      dueEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentDue = loadTaskDue(task);
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'task-due-input';
+        input.value = currentDue;
+        input.placeholder = 'e.g. May';
+        input.maxLength = 20;
+        dueEl.replaceWith(input);
+        input.focus();
+        input.select();
+        const saveDue = () => {
+          const newDue = input.value.trim();
+          saveTaskDue(task.id, newDue);
+          const newSpan = document.createElement('span');
+          const isSoon = newDue && (newDue.toLowerCase().includes('week') || newDue === 'Soon' || newDue.includes('Apr'));
+          newSpan.className = newDue ? `task-due${isSoon?' soon':''}` : 'task-due-empty';
+          newSpan.title = newDue ? 'Tap to edit' : 'Add due date';
+          newSpan.textContent = newDue || '+';
+          input.replaceWith(newSpan);
+          // Re-attach edit handler
+          newSpan.addEventListener('click', (ev) => { ev.stopPropagation(); newSpan.dispatchEvent(new Event('_edit')); });
+          attachDueEdit(newSpan, task);
+        };
+        input.addEventListener('blur', saveDue);
+        input.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter'){ input.blur(); }
+          if(ev.key === 'Escape'){ input.value = loadTaskDue(task); input.blur(); }
+        });
+      });
+    }
+
     body.appendChild(row);
   });
 
