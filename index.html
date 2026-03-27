@@ -967,6 +967,7 @@ function navigate(tab){
   if(screen){ screen.classList.add('active'); }
   else{ document.getElementById('screen-today').classList.add('active'); document.getElementById('nav-today').classList.add('active'); showToast(`${tab.charAt(0).toUpperCase()+tab.slice(1)} view coming soon`); return; }
   if(nav) nav.classList.add('active');
+  if(tab==='today') renderToday();
   if(tab==='week') renderWeekView();
   if(tab==='projects') renderProjects();
 }
