@@ -610,6 +610,48 @@ let todayLog   = loadLog(todayKey());
 let b3done     = loadB3();
 let viewMonday = getMondayOf(new Date());
 
+
+// ── Streak calculation ────────────────────────────────────────
+// Counts consecutive days ending today (or yesterday if today not yet done)
+// that a given habit was completed.
+function calcStreak(habitId){
+  const today = new Date();
+  let streak = 0;
+  let d = new Date(today);
+
+  // Check if done today — if not, start checking from yesterday
+  const todayStr = dateKey(d);
+  const todayLog = loadLog(todayStr);
+  if(!todayLog[habitId]){
+    d.setDate(d.getDate() - 1);
+  }
+
+  // Walk backwards until we find a day it wasn't done
+  for(let i = 0; i < 365; i++){
+    const dk = dateKey(d);
+    const log = loadLog(dk);
+    if(log[habitId]){
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+// Calculate streaks for all habits and cache them
+// Returns a map of habitId -> streak count
+function calcAllStreaks(){
+  const streaks = {};
+  CONFIG.sections.forEach(sec => {
+    sec.habits.forEach(h => {
+      streaks[h.id] = calcStreak(h.id);
+    });
+  });
+  return streaks;
+}
+
 // ── TODAY render ──────────────────────────────────────────────
 function renderGreeting(){
   document.getElementById('greeting').textContent=`${getGreeting()}, ${CONFIG.name}`;
@@ -679,7 +721,8 @@ function renderSections(){
     const body=document.createElement('div'); body.className='sec-body';
     sec.habits.forEach(h=>{
       const done=!!todayLog[h.id], row=document.createElement('div'); row.className='habit-row';
-      row.innerHTML=`<div class="habit-left"><div class="hcheck ${done?'done':''}" style="${done?`background:${sec.color};`:''}"></div><span class="habit-name ${done?'done':''}">${h.name}</span></div><div class="streak-wrap">${h.streak>0?`<div class="streak-fire" style="background:${sec.color};"></div> ${h.streak}`:'— 0'}</div>`;
+      const streak=calcStreak(h.id);
+      row.innerHTML=`<div class="habit-left"><div class="hcheck ${done?'done':''}" style="${done?`background:${sec.color};`:''}"></div><span class="habit-name ${done?'done':''}">${h.name}</span></div><div class="streak-wrap">${streak>0?`<div class="streak-fire" style="background:${sec.color};"></div> ${streak}`:'— 0'}</div>`;
       row.addEventListener('click',()=>toggleHabit(h.id,sec.color));
       body.appendChild(row);
     });
@@ -688,7 +731,8 @@ function renderSections(){
 }
 function renderTodayStats(){
   const ids=allIds(), done=ids.filter(id=>todayLog[id]).length;
-  const best=Math.max(0,...CONFIG.sections.flatMap(s=>s.habits.map(h=>h.streak)));
+  const streaks=calcAllStreaks();
+  const best=Math.max(0,...Object.values(streaks));
   document.getElementById('stat-done').textContent=done;
   document.getElementById('stat-streak').textContent=best;
   document.getElementById('stat-week').textContent=weekScoreFor(getMondayOf(new Date()))+'%';
