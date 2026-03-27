@@ -1195,8 +1195,7 @@ function buildProjectCard(proj) {
       saveThisWeek(task.id, nowOn);
       toggle.classList.toggle('on', nowOn);
       syncThisWeekState();
-      // Refresh today focus if today screen visible
-      if(document.getElementById('screen-today').classList.contains('active')) renderFocus();
+      renderFocus(); // Always update focus list regardless of active screen
     });
     row.addEventListener('click', () => toggleTask(task.id, proj.id, proj.color, row));
     body.appendChild(row);
