@@ -822,10 +822,10 @@ function renderFocus(){
 
   const roleColors = { work:'#185FA5', self:'#BA7517', life:'#888780' };
 
-  // Collect all flagged tasks across all projects
+  // Collect all flagged tasks across all projects (config + custom)
   const focused = [];
   CONFIG.projects.forEach(proj => {
-    proj.tasks.forEach(task => {
+    getAllTasks(proj).forEach(task => {
       if(loadThisWeek(task.id)){
         focused.push({ task, proj });
       }
