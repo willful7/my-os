@@ -1093,17 +1093,28 @@ async function init(){
   if(USE_SUPABASE){
     try{
       setSyncStatus('syncing');
-      // Load today's habit log
-      const res=await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?date=eq.${todayKey()}&select=log`,
-        {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
-      if(res.ok){
-        const d=await res.json();
-        if(d.length&&d[0].log){ todayLog=d[0].log; saveLog(todayKey(),todayLog); }
+      // Load last 30 days of habit logs (for streak calculation)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const fromDate = dateKey(thirtyDaysAgo);
+      const histRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/habit_logs?date=gte.${fromDate}&select=date,log&order=date.desc`,
+        {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}}
+      );
+      if(histRes.ok){
+        const rows = await histRes.json();
+        rows.forEach(row => {
+          if(row.date && row.log){
+            saveLog(row.date, row.log);
+            // Update todayLog if this row is today
+            if(row.date === todayKey()) todayLog = row.log;
+          }
+        });
       }
       // Load app state (tasks, thisweek, big3)
       await loadAppStateFromSupabase();
       setSyncStatus('synced');
-      // Re-render now that we have fresh data
+      // Re-render with fresh data — streaks now have full history
       renderToday();
       // Also refresh projects/week if visible
       if(document.getElementById('screen-projects').classList.contains('active')) renderProjects();
