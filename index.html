@@ -251,6 +251,19 @@
     .task-week-toggle.on { background: #EF9F27; border-color: #EF9F27; justify-content: flex-end; }
     .task-week-toggle .twt-thumb { width: 10px; height: 10px; border-radius: 50%; background: var(--border2); transition: all .15s; }
     .task-week-toggle.on .twt-thumb { background: #fff; }
+    /* ── Big 3 edit mode ────────────────────────────────────── */
+    .big3-edit-btn { font-size: 11px; font-weight: 500; color: #7F77DD; cursor: pointer; padding: 2px 8px; border-radius: 6px; border: 0.5px solid #AFA9EC; background: transparent; -webkit-tap-highlight-color: transparent; margin-left: auto; }
+    .big3-edit-btn:hover { background: rgba(83,74,183,0.1); }
+    .big3-input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .big3-input-row:last-of-type { margin-bottom: 0; }
+    .b3-num { font-size: 11px; font-weight: 600; color: #534AB7; width: 14px; flex-shrink: 0; text-align: center; }
+    .b3-input { flex: 1; font-size: 13px; color: #3C3489; background: transparent; border: none; border-bottom: 1px solid #AFA9EC; outline: none; padding: 2px 0; }
+    @media (prefers-color-scheme: dark) { .b3-input { color: #CECBF6; border-bottom-color: #534AB7; } }
+    .b3-input::placeholder { color: #AFA9EC; }
+    .big3-save-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+    .big3-cancel-btn { font-size: 12px; color: #7F77DD; cursor: pointer; padding: 4px 10px; -webkit-tap-highlight-color: transparent; }
+    .big3-save-btn { font-size: 12px; font-weight: 500; color: #fff; background: #534AB7; border: none; border-radius: 7px; padding: 5px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
   </style>
 </head>
 <body>
@@ -276,7 +289,10 @@
       </div>
     </div>
     <div class="big3-block">
-      <div class="big3-title">THIS WEEK'S BIG 3</div>
+      <div id="big3-title-row" style="display:flex;align-items:center;margin-bottom:8px;">
+        <span class="big3-title" style="margin-bottom:0;">THIS WEEK'S BIG 3</span>
+        <button class="big3-edit-btn" onclick="renderBig3(true)">Edit</button>
+      </div>
       <div id="big3-list"></div>
     </div>
     <div id="sections-container"></div>
@@ -554,6 +570,27 @@ function saveLog(dk,log){ localStorage.setItem(`habitlog-${dk}`,JSON.stringify(l
 function loadB3(){ try{return JSON.parse(localStorage.getItem(`big3-${weekKey()}`)||'{}');}catch{return{};} }
 function saveB3(done){ localStorage.setItem(`big3-${weekKey()}`,JSON.stringify(done)); }
 
+// ── Big 3 text storage (per week) ────────────────────────────
+function b3TextKey(){ return 'big3-text-' + weekKey(); }
+
+function loadBig3Text(){
+  try{
+    const stored = JSON.parse(localStorage.getItem(b3TextKey()) || 'null');
+    if(stored && Array.isArray(stored)) return stored;
+  }catch{}
+  return CONFIG.big3.map(item => item.text);
+}
+
+function saveBig3Text(texts){
+  localStorage.setItem(b3TextKey(), JSON.stringify(texts));
+}
+
+function syncBig3Text(){
+  if(!USE_SUPABASE) return;
+  const texts = loadBig3Text();
+  syncAppState('big3-text-' + weekKey(), texts);
+}
+
 // ── Scores ────────────────────────────────────────────────────
 function allIds(){ return CONFIG.sections.flatMap(s=>s.habits.map(h=>h.id)); }
 function dayScore(dk){
@@ -578,15 +615,56 @@ function renderGreeting(){
   document.getElementById('greeting').textContent=`${getGreeting()}, ${CONFIG.name}`;
   document.getElementById('date-line').textContent=formatDate(new Date());
 }
-function renderBig3(){
-  const el=document.getElementById('big3-list'); el.innerHTML='';
-  CONFIG.big3.forEach(item=>{
-    const done=!!b3done[item.id], row=document.createElement('div');
-    row.className='big3-item';
-    row.innerHTML=`<div class="b3-box ${done?'done':''}"></div><span class="b3-text ${done?'done':''}">${item.text}</span>`;
-    row.addEventListener('click',()=>{ b3done[item.id]=!b3done[item.id]; saveB3(b3done); syncBig3State(); renderBig3(); renderWeekBig3(); });
-    el.appendChild(row);
-  });
+function renderBig3(editMode){
+  const el = document.getElementById('big3-list');
+  const titleRow = document.getElementById('big3-title-row');
+  el.innerHTML = '';
+
+  const texts = loadBig3Text();
+
+  if(editMode){
+    // Edit mode — show inputs
+    titleRow.querySelector('.big3-edit-btn').textContent = '';
+    texts.forEach((text, i) => {
+      const row = document.createElement('div');
+      row.className = 'big3-input-row';
+      row.innerHTML = `<span class="b3-num">${i+1}</span><input class="b3-input" value="${text.replace(/"/g,'&quot;')}" placeholder="Big rock ${i+1}…" maxlength="80"/>`;
+      el.appendChild(row);
+    });
+    const saveRow = document.createElement('div');
+    saveRow.className = 'big3-save-row';
+    saveRow.innerHTML = `<span class="big3-cancel-btn">Cancel</span><button class="big3-save-btn">Save</button>`;
+    saveRow.querySelector('.big3-cancel-btn').addEventListener('click', () => renderBig3(false));
+    saveRow.querySelector('.big3-save-btn').addEventListener('click', () => {
+      const inputs = el.querySelectorAll('.b3-input');
+      const newTexts = Array.from(inputs).map(inp => inp.value.trim() || inp.placeholder);
+      saveBig3Text(newTexts);
+      syncBig3Text();
+      renderBig3(false);
+      renderWeekBig3();
+    });
+    el.appendChild(saveRow);
+    // Focus first input
+    setTimeout(() => { const f = el.querySelector('.b3-input'); if(f) f.focus(); }, 50);
+  } else {
+    // View mode — show checkboxes
+    titleRow.querySelector('.big3-edit-btn').textContent = 'Edit';
+    texts.forEach((text, i) => {
+      const id = 'b' + (i+1);
+      const done = !!b3done[id];
+      const row = document.createElement('div');
+      row.className = 'big3-item';
+      row.innerHTML = `<div class="b3-box ${done?'done':''}"></div><span class="b3-text ${done?'done':''}">${text}</span>`;
+      row.addEventListener('click', () => {
+        b3done[id] = !b3done[id];
+        saveB3(b3done);
+        syncBig3State();
+        renderBig3(false);
+        renderWeekBig3();
+      });
+      el.appendChild(row);
+    });
+  }
 }
 function renderSections(){
   const c=document.getElementById('sections-container'); c.innerHTML='';
@@ -687,10 +765,12 @@ function toggleGridDot(hid,dk,color,el){
 
 function renderWeekBig3(){
   const el=document.getElementById('b3-prog-list'); el.innerHTML='';
-  CONFIG.big3.forEach(item=>{
-    const done=!!b3done[item.id], pct=done?100:0;
+  const texts = loadBig3Text();
+  texts.forEach((text, i) => {
+    const id = 'b' + (i+1);
+    const done=!!b3done[id], pct=done?100:0;
     const div=document.createElement('div'); div.className='b3-prog-row';
-    div.innerHTML=`<div class="b3-prog-info"><div class="b3-prog-name">${item.text}</div><div class="b3-prog-bg"><div class="b3-prog-fill" style="width:${pct}%;"></div></div></div><div class="b3-prog-pct">${done?'100%':'—'}</div>`;
+    div.innerHTML=`<div class="b3-prog-info"><div class="b3-prog-name">${text}</div><div class="b3-prog-bg"><div class="b3-prog-fill" style="width:${pct}%;"></div></div></div><div class="b3-prog-pct">${done?'100%':'—'}</div>`;
     el.appendChild(div);
   });
 }
@@ -839,11 +919,16 @@ async function loadAppStateFromSupabase(){
         Object.entries(row.value).forEach(([id,on])=>{ localStorage.setItem('thisweek-'+id, on?'true':'false'); });
       }
       if(row.key==='big3' && row.value){
-        // Store as big3-WEEKKEY
         const wk=weekKey();
         const existing=loadB3();
         const merged=Object.assign({},row.value,existing);
         localStorage.setItem('big3-'+wk, JSON.stringify(merged));
+      }
+      // Load Big 3 text for current week
+      if(row.key===('big3-text-'+weekKey()) && row.value){
+        if(Array.isArray(row.value)){
+          localStorage.setItem(b3TextKey(), JSON.stringify(row.value));
+        }
       }
     });
   }catch(e){ console.log('Load state error:', e); }
