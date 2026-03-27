@@ -801,7 +801,9 @@ function toggleGridDot(hid,dk,color,el){
   const done=log[hid];
   el.classList.toggle('done',done); el.classList.remove('is-today');
   el.style.background=done?color:'';
-  if(dk===todayKey()){ todayLog=loadLog(dk); renderTodayStats(); }
+  if(dk===todayKey()){ todayLog=loadLog(dk); }
+  // Always re-render Today sections so streaks update immediately
+  renderSections(); renderTodayStats();
   const days=getWeekDays(viewMonday);
   renderWeekStats(days,todayKey()); renderDayScores(days,todayKey());
   syncLog(dk,log);
