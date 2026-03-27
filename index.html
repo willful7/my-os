@@ -804,9 +804,9 @@ function saveTaskDone(taskId, done) {
   localStorage.setItem('task-' + taskId, done ? 'true' : 'false');
 }
 
-// Merge config tasks with localStorage state
+// Merge config + custom tasks with localStorage done state
 function getTasksDone(project) {
-  return project.tasks.map(t => ({...t, done: loadTaskDone(t.id)}));
+  return getAllTasks(project).map(t => ({...t, done: loadTaskDone(t.id)}));
 }
 
 // ── This-week task flags ──────────────────────────────────────
@@ -859,6 +859,57 @@ function renderFocus(){
     });
     list.appendChild(row);
   });
+}
+
+
+// ── Custom task persistence ───────────────────────────────────
+// Custom tasks are stored per project in localStorage and Supabase
+function customTasksKey(projId){ return 'custom-tasks-' + projId; }
+
+function loadCustomTasks(projId){
+  try{ return JSON.parse(localStorage.getItem(customTasksKey(projId)) || '[]'); }
+  catch{ return []; }
+}
+
+function saveCustomTasks(projId, tasks){
+  localStorage.setItem(customTasksKey(projId), JSON.stringify(tasks));
+}
+
+function addCustomTask(projId, text){
+  const tasks = loadCustomTasks(projId);
+  const newTask = { id: projId + '-c' + Date.now(), text, due: '' };
+  tasks.push(newTask);
+  saveCustomTasks(projId, tasks);
+  syncCustomTasks(projId, tasks);
+  return newTask;
+}
+
+function syncCustomTasks(projId, tasks){
+  if(!USE_SUPABASE) return;
+  syncAppState('custom-tasks-' + projId, tasks);
+}
+
+// Merge custom tasks into all projects from Supabase app_state rows
+function mergeCustomTasksFromState(rows){
+  rows.forEach(row => {
+    if(row.key && row.key.startsWith('custom-tasks-') && Array.isArray(row.value)){
+      const projId = row.key.replace('custom-tasks-', '');
+      const stored = loadCustomTasks(projId);
+      // Merge: prefer Supabase version but keep local if newer ids
+      const merged = row.value;
+      // Add any local tasks not in supabase (created offline)
+      stored.forEach(lt => {
+        if(!merged.find(st => st.id === lt.id)) merged.push(lt);
+      });
+      saveCustomTasks(projId, merged);
+    }
+  });
+}
+
+// Get all tasks for a project (config + custom)
+function getAllTasks(proj){
+  const custom = loadCustomTasks(proj.id);
+  return [...proj.tasks, ...custom];
 }
 
 // ── Navigation ────────────────────────────────────────────────
@@ -931,6 +982,8 @@ async function loadAppStateFromSupabase(){
         }
       }
     });
+    // Merge custom tasks from Supabase into localStorage
+    mergeCustomTasksFromState(rows);
   }catch(e){ console.log('Load state error:', e); }
 }
 
@@ -938,7 +991,7 @@ async function loadAppStateFromSupabase(){
 function syncTaskDoneState(){
   const state={};
   CONFIG.projects.forEach(proj=>{
-    proj.tasks.forEach(t=>{ state[t.id]=loadTaskDone(t.id); });
+    getAllTasks(proj).forEach(t=>{ state[t.id]=loadTaskDone(t.id); });
   });
   syncAppState('task_done', state);
 }
@@ -947,7 +1000,7 @@ function syncTaskDoneState(){
 function syncThisWeekState(){
   const state={};
   CONFIG.projects.forEach(proj=>{
-    proj.tasks.forEach(t=>{ state[t.id]=loadThisWeek(t.id); });
+    getAllTasks(proj).forEach(t=>{ state[t.id]=loadThisWeek(t.id); });
   });
   syncAppState('thisweek', state);
 }
@@ -1170,9 +1223,8 @@ function buildProjectCard(proj) {
     const input = inputWrap.querySelector('.new-task-input');
     const text = input.value.trim();
     if (text) {
-      const newId = proj.id + '-t' + Date.now();
-      proj.tasks.push({ id: newId, text, done: false, due: '' });
-      saveTaskDone(newId, false);
+      const newTask = addCustomTask(proj.id, text);
+      saveTaskDone(newTask.id, false);
     }
     input.value = '';
     inputWrap.classList.remove('visible');
