@@ -229,6 +229,42 @@
     .task-reorder-btn { width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text3); font-size: 9px; border-radius: 3px; -webkit-tap-highlight-color: transparent; line-height: 1; }
     .task-reorder-btn:hover { background: var(--bg2); color: var(--text2); }
     .task-reorder-btn.hidden { opacity: 0; pointer-events: none; }
+    /* ── Task text inline edit ──────────────────────────────── */
+    .task-text-input { flex: 1; font-size: 13px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; min-width: 0; }
+    /* ── Habit management ───────────────────────────────────── */
+    .habit-edit-btn { font-size: 10px; font-weight: 500; color: var(--text3); cursor: pointer; padding: 2px 7px; border-radius: 6px; border: 0.5px solid var(--border); background: transparent; margin-left: auto; -webkit-tap-highlight-color: transparent; }
+    .habit-edit-btn:hover { background: var(--bg2); }
+    .habit-row-editing { background: var(--bg2); }
+    .habit-name-input { flex: 1; font-size: 14px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; }
+    .habit-del-btn { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border2); color: var(--text3); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; line-height: 1; }
+    .habit-del-btn:hover { border-color: #E24B4A; color: #E24B4A; }
+    .habit-move-btns { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
+    .habit-move-btn { width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text3); font-size: 9px; border-radius: 3px; -webkit-tap-highlight-color: transparent; }
+    .habit-move-btn:hover { background: var(--bg3); color: var(--text2); }
+    .habit-move-btn.hidden { opacity: 0; pointer-events: none; }
+    .add-habit-row { display: flex; align-items: center; gap: 9px; padding: 7px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-top: 0.5px solid var(--border); }
+    .add-habit-icon { width: 18px; height: 18px; border-radius: 50%; border: 1.5px dashed var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 14px; line-height: 1; }
+    .add-habit-text { font-size: 13px; color: var(--text3); }
+    .new-habit-wrap { display: none; padding: 6px 12px 8px; border-top: 0.5px solid var(--border); align-items: center; gap: 8px; }
+    .new-habit-wrap.visible { display: flex; }
+    .new-habit-input { flex: 1; font-size: 13px; border: none; border-bottom: 1px solid var(--border2); outline: none; background: transparent; color: var(--text); padding: 1px 0; }
+    .new-habit-input::placeholder { color: var(--text3); }
+    .new-habit-save { font-size: 12px; font-weight: 500; color: #534AB7; cursor: pointer; padding: 4px 6px; -webkit-tap-highlight-color: transparent; }
+    .add-section-btn { margin: 8px 14px 0; display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--bg); border: 0.5px dashed var(--border2); border-radius: var(--radius); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .add-section-btn-icon { font-size: 14px; color: var(--text3); }
+    .add-section-btn-text { font-size: 13px; color: var(--text3); }
+    .new-section-card { margin: 8px 14px 0; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; }
+    .new-section-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .new-section-input { flex: 1; font-size: 14px; border: none; border-bottom: 1px solid var(--border2); outline: none; background: transparent; color: var(--text); padding: 2px 0; }
+    .new-section-input::placeholder { color: var(--text3); }
+    .color-picker-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .color-swatch { width: 24px; height: 24px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border-color .15s; -webkit-tap-highlight-color: transparent; }
+    .color-swatch.selected { border-color: var(--text); }
+    .new-section-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .btn-cancel { font-size: 12px; color: var(--text3); cursor: pointer; padding: 5px 10px; -webkit-tap-highlight-color: transparent; }
+    .btn-save { font-size: 12px; font-weight: 500; color: #fff; background: #534AB7; border: none; border-radius: 7px; padding: 5px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+
 
     /* ── Editable due labels & status ───────────────────────── */
     .task-due { cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -606,7 +642,7 @@ function syncBig3Text(){
 }
 
 // ── Scores ────────────────────────────────────────────────────
-function allIds(){ return CONFIG.sections.flatMap(s=>s.habits.map(h=>h.id)); }
+function allIds(){ return getLiveSections().flatMap(s=>s.habits.map(h=>h.id)); }
 function dayScore(dk){
   const log=loadLog(dk), ids=allIds();
   return ids.length?Math.round(ids.filter(id=>log[id]).length/ids.length*100):0;
@@ -724,22 +760,93 @@ function renderBig3(editMode){
 }
 function renderSections(){
   const c=document.getElementById('sections-container'); c.innerHTML='';
-  CONFIG.sections.forEach(sec=>{
+  const liveSections = getLiveSections();
+  liveSections.forEach(sec=>{
     const dc=sec.habits.filter(h=>todayLog[h.id]).length;
     const col=sec._collapsed!==undefined?sec._collapsed:sec.collapsed;
     const wrap=document.createElement('div');
     wrap.className=`section${col?' collapsed':''}`;
+    const doneCount = sec.habits.filter(h=>todayLog[h.id]).length;
     const hdr=document.createElement('div'); hdr.className='sec-header';
-    hdr.innerHTML=`<div class="sec-left"><div class="sec-dot" style="background:${sec.color};"></div><span class="sec-name">${sec.name}</span><span class="sec-meta">${dc}/${sec.habits.length}</span></div><span class="sec-chevron ${col?'':'open'}">&#9654;</span>`;
-    hdr.addEventListener('click',()=>{ sec._collapsed=!wrap.classList.contains('collapsed'); renderSections(); });
-    const body=document.createElement('div'); body.className='sec-body';
-    sec.habits.forEach(h=>{
-      const done=!!todayLog[h.id], row=document.createElement('div'); row.className='habit-row';
-      const streak=calcStreak(h.id);
-      row.innerHTML=`<div class="habit-left"><div class="hcheck ${done?'done':''}" style="${done?`background:${sec.color};`:''}"></div><span class="habit-name ${done?'done':''}">${h.name}</span></div><div class="streak-wrap">${streak>0?`<div class="streak-fire" style="background:${sec.color};"></div> ${streak}`:'— 0'}</div>`;
-      row.addEventListener('click',()=>toggleHabit(h.id,sec.color));
-      body.appendChild(row);
+    hdr.innerHTML=`<div class="sec-left"><div class="sec-dot" style="background:${sec.color};"></div><span class="sec-name">${sec.name}</span><span class="sec-meta">${doneCount}/${sec.habits.length}</span></div><button class="habit-edit-btn">Edit</button><span class="sec-chevron ${col?'':'open'}">&#9654;</span>`;
+
+    const editBtn = hdr.querySelector('.habit-edit-btn');
+    hdr.addEventListener('click', (e) => {
+      if(e.target === editBtn) return;
+      sec._collapsed=!wrap.classList.contains('collapsed'); renderSections();
     });
+
+    let editMode = false;
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editMode = !editMode;
+      editBtn.textContent = editMode ? 'Done' : 'Edit';
+      renderHabits(sec, body, editMode);
+    });
+
+    const body=document.createElement('div'); body.className='sec-body';
+
+    function renderHabits(sec, body, editMode){
+      body.innerHTML='';
+      sec.habits.forEach((h, hidx) => {
+        const done=!!todayLog[h.id], row=document.createElement('div');
+        row.className='habit-row' + (editMode?' habit-row-editing':'');
+        const streak=calcStreak(h.id);
+        if(editMode){
+          row.innerHTML=`
+            <div class="habit-move-btns">
+              <div class="habit-move-btn ${hidx===0?'hidden':''}">&#9650;</div>
+              <div class="habit-move-btn ${hidx===sec.habits.length-1?'hidden':''}">&#9660;</div>
+            </div>
+            <span class="habit-name" style="flex:1;cursor:pointer;padding:2px 0;" title="Tap to rename">${h.name}</span>
+            <div class="habit-del-btn" title="Delete">&#215;</div>`;
+          // Move up/down
+          const [upBtn, downBtn] = row.querySelectorAll('.habit-move-btn');
+          upBtn.addEventListener('click', e => { e.stopPropagation(); moveHabitInSection(sec.id, h.id, -1); });
+          downBtn.addEventListener('click', e => { e.stopPropagation(); moveHabitInSection(sec.id, h.id, 1); });
+          // Rename on tap
+          const nameEl = row.querySelector('.habit-name');
+          nameEl.addEventListener('click', e => {
+            e.stopPropagation();
+            const inp = document.createElement('input');
+            inp.className='habit-name-input'; inp.value=h.name; inp.maxLength=60;
+            nameEl.replaceWith(inp); inp.focus(); inp.select();
+            const save = () => { renameHabit(sec.id, h.id, inp.value||h.name); renderSections(); };
+            inp.addEventListener('blur', save);
+            inp.addEventListener('keydown', ev => { if(ev.key==='Enter') inp.blur(); if(ev.key==='Escape'){inp.value=h.name;inp.blur();} });
+          });
+          // Delete
+          row.querySelector('.habit-del-btn').addEventListener('click', e => {
+            e.stopPropagation();
+            if(confirm(`Delete "${h.name}"?`)) deleteHabit(sec.id, h.id);
+          });
+        } else {
+          row.innerHTML=`<div class="habit-left"><div class="hcheck ${done?'done':''}" style="${done?`background:${sec.color};`:''}"></div><span class="habit-name ${done?'done':''}">${h.name}</span></div><div class="streak-wrap">${streak>0?`<div class="streak-fire" style="background:${sec.color};"></div> ${streak}`:'— 0'}</div>`;
+          row.addEventListener('click',()=>toggleHabit(h.id,sec.color));
+        }
+        body.appendChild(row);
+      });
+
+      // Add habit row (always visible in edit mode)
+      if(editMode){
+        const addRow = document.createElement('div'); addRow.className='add-habit-row';
+        addRow.innerHTML=`<div class="add-habit-icon">+</div><span class="add-habit-text">Add habit…</span>`;
+        const inputWrap = document.createElement('div'); inputWrap.className='new-habit-wrap';
+        inputWrap.innerHTML=`<input class="new-habit-input" placeholder="Habit name…" maxlength="60"/><span class="new-habit-save">Save</span>`;
+        addRow.addEventListener('click', () => { addRow.style.display='none'; inputWrap.classList.add('visible'); inputWrap.querySelector('.new-habit-input').focus(); });
+        const saveHabit = () => {
+          const val = inputWrap.querySelector('.new-habit-input').value.trim();
+          if(val) addHabitToSection(sec.id, val);
+          inputWrap.querySelector('.new-habit-input').value='';
+          inputWrap.classList.remove('visible'); addRow.style.display='';
+        };
+        inputWrap.querySelector('.new-habit-save').addEventListener('click', saveHabit);
+        inputWrap.querySelector('.new-habit-input').addEventListener('keydown', ev => { if(ev.key==='Enter') saveHabit(); if(ev.key==='Escape'){inputWrap.classList.remove('visible');addRow.style.display='';} });
+        body.appendChild(addRow); body.appendChild(inputWrap);
+      }
+    }
+
+    renderHabits(sec, body, false);
     wrap.appendChild(hdr); wrap.appendChild(body); c.appendChild(wrap);
   });
 }
@@ -869,6 +976,102 @@ function getTasksDone(project) {
   return getAllTasksOrdered(project).map(t => ({...t, done: loadTaskDone(t.id)}));
 }
 
+
+// ══════════════════════════════════════════════════════════════
+// HABIT MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+
+const SECTION_COLORS = [
+  '#534AB7','#1D9E75','#D4537E','#BA7517','#378ADD',
+  '#E24B4A','#0F6E56','#993556','#185FA5','#5F5E5A'
+];
+
+function habitConfigKey(){ return 'habit-config'; }
+
+function loadHabitConfig(){
+  try{
+    const stored = JSON.parse(localStorage.getItem(habitConfigKey()) || 'null');
+    if(stored && Array.isArray(stored)) return stored;
+  }catch{}
+  // Return deep copy of CONFIG.sections as default
+  return JSON.parse(JSON.stringify(CONFIG.sections));
+}
+
+function saveHabitConfig(sections){
+  localStorage.setItem(habitConfigKey(), JSON.stringify(sections));
+  syncAppState('habit-config', sections);
+}
+
+// Get the live sections (stored or CONFIG default)
+function getLiveSections(){
+  return loadHabitConfig();
+}
+
+function hexToLight(hex){
+  // Create a very light version by mixing with white
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  const lr = Math.round(r*0.15 + 255*0.85);
+  const lg = Math.round(g*0.15 + 255*0.85);
+  const lb = Math.round(b*0.15 + 255*0.85);
+  return `#${lr.toString(16).padStart(2,'0')}${lg.toString(16).padStart(2,'0')}${lb.toString(16).padStart(2,'0')}`;
+}
+
+function addHabitToSection(sectionId, name){
+  const sections = getLiveSections();
+  const sec = sections.find(s => s.id === sectionId);
+  if(!sec || !name.trim()) return;
+  const newId = sectionId + '-h-' + Date.now();
+  sec.habits.push({ id: newId, name: name.trim(), streak: 0 });
+  saveHabitConfig(sections);
+  renderToday();
+}
+
+function deleteHabit(sectionId, habitId){
+  const sections = getLiveSections();
+  const sec = sections.find(s => s.id === sectionId);
+  if(!sec) return;
+  sec.habits = sec.habits.filter(h => h.id !== habitId);
+  saveHabitConfig(sections);
+  renderToday();
+}
+
+function renameHabit(sectionId, habitId, newName){
+  if(!newName.trim()) return;
+  const sections = getLiveSections();
+  const sec = sections.find(s => s.id === sectionId);
+  if(!sec) return;
+  const habit = sec.habits.find(h => h.id === habitId);
+  if(habit) habit.name = newName.trim();
+  saveHabitConfig(sections);
+}
+
+function moveHabitInSection(sectionId, habitId, dir){
+  const sections = getLiveSections();
+  const sec = sections.find(s => s.id === sectionId);
+  if(!sec) return;
+  const idx = sec.habits.findIndex(h => h.id === habitId);
+  const newIdx = idx + dir;
+  if(newIdx < 0 || newIdx >= sec.habits.length) return;
+  [sec.habits[idx], sec.habits[newIdx]] = [sec.habits[newIdx], sec.habits[idx]];
+  saveHabitConfig(sections);
+  renderToday();
+}
+
+function addSection(name, color){
+  if(!name.trim()) return;
+  const sections = getLiveSections();
+  const newId = 'sec-' + Date.now();
+  sections.push({
+    id: newId, name: name.trim(),
+    color, colorLight: hexToLight(color),
+    collapsed: false, habits: []
+  });
+  saveHabitConfig(sections);
+  renderToday();
+}
+
 // ── This-week task flags ──────────────────────────────────────
 function loadThisWeek(taskId){ return localStorage.getItem('thisweek-'+taskId)==='true'; }
 function saveThisWeek(taskId, on){ localStorage.setItem('thisweek-'+taskId, on?'true':'false'); }
@@ -907,7 +1110,7 @@ function renderFocus(){
     row.innerHTML = `
       <div class="hcheck ${done?'done':''}" style="width:22px;height:22px;${done?`background:${proj.color};`:''}"></div>
       <div class="focus-role-dot" style="background:${proj.color};"></div>
-      <span class="focus-task-name ${done?'done':''}">${task.text}</span>
+      <span class="focus-task-name ${done?'done':''}">${loadTaskText(task)}</span>
       <span class="focus-task-proj">${proj.name}</span>`;
     row.addEventListener('click', () => {
       const nowDone = !loadTaskDone(task.id);
@@ -1006,6 +1209,28 @@ function syncAllTaskDues(){
   syncAppState('task-dues', out);
 }
 
+
+
+// ── Task text persistence ──────────────────────────────────────
+function taskTextKey(taskId){ return 'task-text-' + taskId; }
+
+function loadTaskText(task){
+  const stored = localStorage.getItem(taskTextKey(task.id));
+  return stored !== null ? stored : task.text;
+}
+
+function saveTaskText(taskId, text){
+  localStorage.setItem(taskTextKey(taskId), text);
+  syncAllTaskTexts();
+}
+
+function syncAllTaskTexts(){
+  const out = {};
+  CONFIG.projects.forEach(proj => {
+    getAllTasksOrdered(proj).forEach(t => { out[t.id] = loadTaskText(t); });
+  });
+  syncAppState('task-texts', out);
+}
 
 // ── Task order persistence ─────────────────────────────────────
 function taskOrderKey(projId){ return 'task-order-' + projId; }
@@ -1133,6 +1358,16 @@ async function loadAppStateFromSupabase(){
       // Load task order per project
       if(row.key && row.key.startsWith('task-order-') && Array.isArray(row.value)){
         localStorage.setItem(row.key, JSON.stringify(row.value));
+      }
+      // Load task texts
+      if(row.key === 'task-texts' && row.value){
+        Object.entries(row.value).forEach(([id, text]) => {
+          if(text) localStorage.setItem('task-text-' + id, text);
+        });
+      }
+      // Load habit config
+      if(row.key === 'habit-config' && Array.isArray(row.value)){
+        localStorage.setItem(habitConfigKey(), JSON.stringify(row.value));
       }
     });
   }catch(e){ console.log('Load state error:', e); }
@@ -1370,7 +1605,7 @@ function buildProjectCard(proj) {
     const isLast  = taskIdx === tasks.length - 1;
     row.innerHTML = `
       <div class="task-check ${task.done ? 'done' : ''}" style="${task.done ? `background:${proj.color};` : ''}"></div>
-      <span class="task-text ${task.done ? 'done' : ''}">${task.text}</span>
+      <span class="task-text ${task.done ? 'done' : ''}" title="Tap to edit">${loadTaskText(task)}</span>
       ${storedDue ? `<span class="task-due ${dueSoonClass}" title="Tap to edit">${storedDue}</span>` : `<span class="task-due-empty" title="Add due date">+</span>`}
       <div class="task-reorder">
         <div class="task-reorder-btn ${isFirst?'hidden':''}" data-dir="-1">&#9650;</div>
@@ -1395,6 +1630,58 @@ function buildProjectCard(proj) {
         moveTask(proj.id, task.id, parseInt(btn.dataset.dir));
       });
     });
+
+    // Task text inline edit
+    const taskTextEl = row.querySelector('.task-text');
+    if(taskTextEl){
+      taskTextEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentText = loadTaskText(task);
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'task-text-input';
+        input.value = currentText;
+        input.maxLength = 120;
+        taskTextEl.replaceWith(input);
+        input.focus();
+        input.select();
+        const saveText = () => {
+          const newText = input.value.trim();
+          if(newText) saveTaskText(task.id, newText);
+          const newSpan = document.createElement('span');
+          newSpan.className = taskTextEl.className;
+          newSpan.title = 'Tap to edit';
+          newSpan.textContent = newText || currentText;
+          input.replaceWith(newSpan);
+          // Re-attach edit handler on new span
+          newSpan.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const inp2 = document.createElement('input');
+            inp2.type = 'text'; inp2.className = 'task-text-input';
+            inp2.value = loadTaskText(task); inp2.maxLength = 120;
+            newSpan.replaceWith(inp2); inp2.focus(); inp2.select();
+            const save2 = () => {
+              const t2 = inp2.value.trim();
+              if(t2) saveTaskText(task.id, t2);
+              const s2 = document.createElement('span');
+              s2.className = newSpan.className; s2.title = 'Tap to edit';
+              s2.textContent = t2 || loadTaskText(task);
+              inp2.replaceWith(s2);
+            };
+            inp2.addEventListener('blur', save2);
+            inp2.addEventListener('keydown', (e2) => {
+              if(e2.key==='Enter') inp2.blur();
+              if(e2.key==='Escape'){ inp2.value=loadTaskText(task); inp2.blur(); }
+            });
+          });
+        };
+        input.addEventListener('blur', saveText);
+        input.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter') input.blur();
+          if(ev.key === 'Escape'){ input.value = currentText; input.blur(); }
+        });
+      });
+    }
 
     // Due label inline edit
     const dueEl = row.querySelector('.task-due, .task-due-empty');
@@ -1548,6 +1835,44 @@ document.getElementById('proj-filters').addEventListener('click', e => {
 });
 
 // Unregister service workers and clear all caches on every load
+
+// Add section UI helpers
+let selectedSectionColor = '#534AB7';
+
+function showAddSection(){
+  document.getElementById('add-section-btn').style.display='none';
+  const card = document.getElementById('new-section-card');
+  card.style.display='block';
+  // Build color swatches
+  const row = document.getElementById('color-picker-row');
+  row.innerHTML='';
+  SECTION_COLORS.forEach(hex => {
+    const swatch = document.createElement('div');
+    swatch.className='color-swatch' + (hex===selectedSectionColor?' selected':'');
+    swatch.style.background=hex;
+    swatch.addEventListener('click', () => {
+      selectedSectionColor=hex;
+      row.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
+      swatch.classList.add('selected');
+    });
+    row.appendChild(swatch);
+  });
+  document.getElementById('new-section-name').focus();
+}
+
+function hideAddSection(){
+  document.getElementById('new-section-card').style.display='none';
+  document.getElementById('add-section-btn').style.display='';
+  document.getElementById('new-section-name').value='';
+}
+
+function saveNewSection(){
+  const name = document.getElementById('new-section-name').value.trim();
+  if(!name){ document.getElementById('new-section-name').focus(); return; }
+  addSection(name, selectedSectionColor);
+  hideAddSection();
+}
+
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>{
     regs.forEach(r=>r.unregister());
