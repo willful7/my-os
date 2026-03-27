@@ -224,6 +224,12 @@
     .task-text.done { color: var(--text3); text-decoration: line-through; }
     .task-due { font-size: 10px; color: var(--text3); white-space: nowrap; }
     .task-due.soon { color: #BA7517; }
+    /* ── Task reorder buttons ───────────────────────────────── */
+    .task-reorder { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; margin-left: 2px; }
+    .task-reorder-btn { width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text3); font-size: 9px; border-radius: 3px; -webkit-tap-highlight-color: transparent; line-height: 1; }
+    .task-reorder-btn:hover { background: var(--bg2); color: var(--text2); }
+    .task-reorder-btn.hidden { opacity: 0; pointer-events: none; }
+
     /* ── Editable due labels & status ───────────────────────── */
     .task-due { cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .task-due:hover { opacity: 0.7; }
@@ -858,9 +864,9 @@ function saveTaskDone(taskId, done) {
   localStorage.setItem('task-' + taskId, done ? 'true' : 'false');
 }
 
-// Merge config + custom tasks with localStorage done state
+// Merge config + custom tasks with localStorage done state, in stored order
 function getTasksDone(project) {
-  return getAllTasks(project).map(t => ({...t, done: loadTaskDone(t.id)}));
+  return getAllTasksOrdered(project).map(t => ({...t, done: loadTaskDone(t.id)}));
 }
 
 // ── This-week task flags ──────────────────────────────────────
@@ -1000,6 +1006,45 @@ function syncAllTaskDues(){
   syncAppState('task-dues', out);
 }
 
+
+// ── Task order persistence ─────────────────────────────────────
+function taskOrderKey(projId){ return 'task-order-' + projId; }
+
+function loadTaskOrder(projId){
+  try{ return JSON.parse(localStorage.getItem(taskOrderKey(projId)) || 'null'); }
+  catch{ return null; }
+}
+
+function saveTaskOrder(projId, ids){
+  localStorage.setItem(taskOrderKey(projId), JSON.stringify(ids));
+  syncAppState('task-order-' + projId, ids);
+}
+
+// Returns all tasks for a project in the stored order
+function getAllTasksOrdered(proj){
+  const all = getAllTasks(proj);
+  const order = loadTaskOrder(proj.id);
+  if(!order) return all;
+  // Sort by stored order, append any new tasks not in order
+  const sorted = order.map(id => all.find(t => t.id === id)).filter(Boolean);
+  const unsorted = all.filter(t => !order.includes(t.id));
+  return [...sorted, ...unsorted];
+}
+
+function moveTask(projId, taskId, direction){
+  const proj = CONFIG.projects.find(p => p.id === projId);
+  if(!proj) return;
+  const tasks = getAllTasksOrdered(proj);
+  const idx = tasks.findIndex(t => t.id === taskId);
+  if(idx === -1) return;
+  const newIdx = idx + direction;
+  if(newIdx < 0 || newIdx >= tasks.length) return;
+  // Swap
+  [tasks[idx], tasks[newIdx]] = [tasks[newIdx], tasks[idx]];
+  saveTaskOrder(projId, tasks.map(t => t.id));
+  renderProjects();
+}
+
 // ── Navigation ────────────────────────────────────────────────
 function navigate(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1085,6 +1130,10 @@ async function loadAppStateFromSupabase(){
           localStorage.setItem('task-due-' + id, due);
         });
       }
+      // Load task order per project
+      if(row.key && row.key.startsWith('task-order-') && Array.isArray(row.value)){
+        localStorage.setItem(row.key, JSON.stringify(row.value));
+      }
     });
   }catch(e){ console.log('Load state error:', e); }
 }
@@ -1093,7 +1142,7 @@ async function loadAppStateFromSupabase(){
 function syncTaskDoneState(){
   const state={};
   CONFIG.projects.forEach(proj=>{
-    getAllTasks(proj).forEach(t=>{ state[t.id]=loadTaskDone(t.id); });
+    getAllTasksOrdered(proj).forEach(t=>{ state[t.id]=loadTaskDone(t.id); });
   });
   syncAppState('task_done', state);
 }
@@ -1102,7 +1151,7 @@ function syncTaskDoneState(){
 function syncThisWeekState(){
   const state={};
   CONFIG.projects.forEach(proj=>{
-    getAllTasks(proj).forEach(t=>{ state[t.id]=loadThisWeek(t.id); });
+    getAllTasksOrdered(proj).forEach(t=>{ state[t.id]=loadThisWeek(t.id); });
   });
   syncAppState('thisweek', state);
 }
@@ -1316,10 +1365,17 @@ function buildProjectCard(proj) {
     const thisWeekOn = loadThisWeek(task.id);
     const storedDue = loadTaskDue(task);
     const dueSoonClass = storedDue && (storedDue.toLowerCase().includes('week') || storedDue === 'Soon' || storedDue.includes('Apr')) ? 'soon' : '';
+    const taskIdx = tasks.indexOf(task);
+    const isFirst = taskIdx === 0;
+    const isLast  = taskIdx === tasks.length - 1;
     row.innerHTML = `
       <div class="task-check ${task.done ? 'done' : ''}" style="${task.done ? `background:${proj.color};` : ''}"></div>
       <span class="task-text ${task.done ? 'done' : ''}">${task.text}</span>
       ${storedDue ? `<span class="task-due ${dueSoonClass}" title="Tap to edit">${storedDue}</span>` : `<span class="task-due-empty" title="Add due date">+</span>`}
+      <div class="task-reorder">
+        <div class="task-reorder-btn ${isFirst?'hidden':''}" data-dir="-1">&#9650;</div>
+        <div class="task-reorder-btn ${isLast?'hidden':''}" data-dir="1">&#9660;</div>
+      </div>
       <div class="task-week-toggle ${thisWeekOn ? 'on' : ''}" title="Add to this week's focus"><div class="twt-thumb"></div></div>`;
     const toggle = row.querySelector('.task-week-toggle');
     toggle.addEventListener('click', e => {
@@ -1331,6 +1387,14 @@ function buildProjectCard(proj) {
       renderFocus(); // Always update focus list regardless of active screen
     });
     row.addEventListener('click', () => toggleTask(task.id, proj.id, proj.color, row));
+
+    // Reorder buttons
+    row.querySelectorAll('.task-reorder-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveTask(proj.id, task.id, parseInt(btn.dataset.dir));
+      });
+    });
 
     // Due label inline edit
     const dueEl = row.querySelector('.task-due, .task-due-empty');
