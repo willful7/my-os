@@ -44,6 +44,7 @@
       background: var(--bg);
       color: var(--text);
       overflow: hidden;
+      max-width: 100vw;
     }
     #app {
       display: flex;
@@ -93,10 +94,10 @@
 
     /* sections */
     .section { margin: 8px 14px 0; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .sec-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
-    .sec-left { display: flex; align-items: center; gap: 8px; }
+    .sec-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; overflow: hidden; }
+    .sec-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; overflow: hidden; }
     .sec-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
-    .sec-name { font-size: 14px; font-weight: 500; color: var(--text); }
+    .sec-name { font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sec-meta { font-size: 11px; color: var(--text3); margin-left: 4px; }
     .sec-chevron { font-size: 12px; color: var(--text3); transition: transform .2s; display: inline-block; }
     .sec-chevron.open { transform: rotate(90deg); }
@@ -104,7 +105,7 @@
     .section.collapsed .sec-body { display: none; }
 
     /* habit rows */
-    .habit-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .habit-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; overflow: hidden; }
     .habit-row:last-child { border-bottom: none; }
     .habit-left { display: flex; align-items: center; gap: 10px; }
     .hcheck { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
@@ -232,7 +233,7 @@
     /* ── Task text inline edit ──────────────────────────────── */
     .task-text-input { flex: 1; font-size: 13px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; min-width: 0; }
     /* ── Habit management ───────────────────────────────────── */
-    .habit-edit-btn { font-size: 10px; font-weight: 500; color: var(--text3); cursor: pointer; padding: 2px 7px; border-radius: 6px; border: 0.5px solid var(--border); background: transparent; margin-left: auto; -webkit-tap-highlight-color: transparent; }
+    .habit-edit-btn { font-size: 10px; font-weight: 500; color: var(--text3); cursor: pointer; padding: 2px 6px; border-radius: 6px; border: 0.5px solid var(--border); background: transparent; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
     .habit-edit-btn:hover { background: var(--bg2); }
     .habit-row-editing { background: var(--bg2); }
     .habit-name-input { flex: 1; font-size: 14px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; }
@@ -782,7 +783,7 @@ function renderSections(){
     wrap.className=`section${col?' collapsed':''}`;
     const doneCount = sec.habits.filter(h=>todayLog[h.id]).length;
     const hdr=document.createElement('div'); hdr.className='sec-header';
-    hdr.innerHTML=`<div class="sec-left"><div class="sec-dot" style="background:${sec.color};"></div><span class="sec-name">${sec.name}</span><span class="sec-meta">${doneCount}/${sec.habits.length}</span></div><button class="habit-edit-btn">Edit</button><span class="sec-chevron ${col?'':'open'}">&#9654;</span>`;
+    hdr.innerHTML=`<div class="sec-left"><div class="sec-dot" style="background:${sec.color};"></div><span class="sec-name">${sec.name}</span><span class="sec-meta">${doneCount}/${sec.habits.length}</span></div><div style="display:flex;align-items:center;gap:4px;flex-shrink:0;"><button class="habit-edit-btn">Edit</button><span class="sec-chevron ${col?'':'open'}">&#9654;</span></div>`;
 
     const editBtn = hdr.querySelector('.habit-edit-btn');
     hdr.addEventListener('click', (e) => {
@@ -802,7 +803,7 @@ function renderSections(){
       e.stopPropagation();
       deleteSection(sec.id);
     });
-    // Insert after edit button
+    // Insert after edit button, inside the wrapper div
     editBtn.parentNode.insertBefore(delSecBtn, editBtn.nextSibling);
 
     let editMode = false;
