@@ -232,6 +232,8 @@
     .task-reorder-btn { width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text3); font-size: 9px; border-radius: 3px; -webkit-tap-highlight-color: transparent; line-height: 1; }
     .task-reorder-btn:hover { background: var(--bg2); color: var(--text2); }
     .task-reorder-btn.hidden { opacity: 0; pointer-events: none; }
+    .task-del-btn { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); color: var(--text3); font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; line-height: 1; }
+    .task-del-btn:hover { border-color: #E24B4A; color: #E24B4A; }
     /* ── Task text inline edit ──────────────────────────────── */
     .task-text-input { flex: 1; font-size: 16px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; min-width: 0; }
     /* ── Habit management ───────────────────────────────────── */
@@ -1303,6 +1305,28 @@ function getAllTasksOrdered(proj){
   return [...sorted, ...unsorted];
 }
 
+function deleteTask(projId, taskId){
+  const proj = CONFIG.projects.find(p => p.id === projId);
+  if(!proj) return;
+  // Remove from config tasks if present
+  proj.tasks = proj.tasks.filter(t => t.id !== taskId);
+  // Remove from custom tasks if present
+  const custom = loadCustomTasks(projId).filter(t => t.id !== taskId);
+  saveCustomTasks(projId, custom);
+  // Remove from order
+  const order = loadTaskOrder(projId);
+  if(order){
+    saveTaskOrder(projId, order.filter(id => id !== taskId));
+  }
+  // Clean up related keys
+  localStorage.removeItem('task-' + taskId);
+  localStorage.removeItem('thisweek-' + taskId);
+  localStorage.removeItem('task-due-' + taskId);
+  localStorage.removeItem('task-text-' + taskId);
+  renderProjects();
+  renderFocus();
+}
+
 function moveTask(projId, taskId, direction){
   const proj = CONFIG.projects.find(p => p.id === projId);
   if(!proj) return;
@@ -1658,6 +1682,7 @@ function buildProjectCard(proj) {
         <div class="task-reorder-btn ${isFirst?'hidden':''}" data-dir="-1">&#9650;</div>
         <div class="task-reorder-btn ${isLast?'hidden':''}" data-dir="1">&#9660;</div>
       </div>
+      <div class="task-del-btn" title="Delete task">&#215;</div>
       <div class="task-week-toggle ${thisWeekOn ? 'on' : ''}" title="Add to this week's focus"><div class="twt-thumb"></div></div>`;
     const toggle = row.querySelector('.task-week-toggle');
     toggle.addEventListener('click', e => {
@@ -1677,6 +1702,15 @@ function buildProjectCard(proj) {
         moveTask(proj.id, task.id, parseInt(btn.dataset.dir));
       });
     });
+
+    // Delete button
+    const delBtn = row.querySelector('.task-del-btn');
+    if(delBtn){
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if(confirm(`Delete "${loadTaskText(task)}"?`)) deleteTask(proj.id, task.id);
+      });
+    }
 
     // Task text inline edit
     const taskTextEl = row.querySelector('.task-text');
@@ -1932,4 +1966,3 @@ if('caches' in window){
 
 </body>
 </html>
-
