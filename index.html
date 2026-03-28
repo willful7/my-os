@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icons/icon-192.png"/>
-  <title>My OS v2</title>
+  <title>My OS</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -793,11 +793,24 @@ function renderSections(){
       hdr.querySelector('.sec-chevron').classList.toggle('open', !nowCollapsed);
     });
 
+    // Add delete section button to header
+    const delSecBtn = document.createElement('button');
+    delSecBtn.className = 'habit-edit-btn';
+    delSecBtn.style.cssText = 'color:#E24B4A;border-color:rgba(226,75,74,0.3);display:none;margin-left:4px;';
+    delSecBtn.textContent = 'Delete';
+    delSecBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteSection(sec.id);
+    });
+    // Insert after edit button
+    editBtn.parentNode.insertBefore(delSecBtn, editBtn.nextSibling);
+
     let editMode = false;
     editBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       editMode = !editMode;
       editBtn.textContent = editMode ? 'Done' : 'Edit';
+      delSecBtn.style.display = editMode ? '' : 'none';
       renderHabits(sec, body, editMode);
     });
 
@@ -1086,6 +1099,20 @@ function addSection(name, color){
     collapsed: false, habits: []
   });
   saveHabitConfig(sections);
+  renderToday();
+}
+
+function deleteSection(sectionId){
+  const sections = getLiveSections();
+  const sec = sections.find(s => s.id === sectionId);
+  if(!sec) return;
+  const habitCount = sec.habits.length;
+  const msg = habitCount > 0
+    ? `Delete "${sec.name}" and its ${habitCount} habit${habitCount>1?'s':''}?`
+    : `Delete "${sec.name}"?`;
+  if(!confirm(msg)) return;
+  const newSections = sections.filter(s => s.id !== sectionId);
+  saveHabitConfig(newSections);
   renderToday();
 }
 
