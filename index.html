@@ -1712,114 +1712,59 @@ function buildProjectCard(proj) {
       });
     }
 
-    // Task text inline edit
+    // Task text inline edit — uses helper that always re-attaches itself
+    function attachTextEdit(el){
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'task-text-input';
+        inp.value = loadTaskText(task); inp.maxLength = 120;
+        el.replaceWith(inp); inp.focus(); inp.select();
+        inp.addEventListener('blur', () => {
+          const val = inp.value.trim();
+          if(val) saveTaskText(task.id, val);
+          const span = document.createElement('span');
+          span.className = el.className; span.title = 'Tap to edit';
+          span.textContent = val || loadTaskText(task);
+          inp.replaceWith(span);
+          attachTextEdit(span);
+        });
+        inp.addEventListener('keydown', (ev) => {
+          if(ev.key==='Enter') inp.blur();
+          if(ev.key==='Escape'){ inp.value=loadTaskText(task); inp.blur(); }
+        });
+      });
+    }
     const taskTextEl = row.querySelector('.task-text');
-    if(taskTextEl){
-      taskTextEl.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const currentText = loadTaskText(task);
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'task-text-input';
-        input.value = currentText;
-        input.maxLength = 120;
-        taskTextEl.replaceWith(input);
-        input.focus();
-        input.select();
-        const saveText = () => {
-          const newText = input.value.trim();
-          if(newText) saveTaskText(task.id, newText);
-          const newSpan = document.createElement('span');
-          newSpan.className = taskTextEl.className;
-          newSpan.title = 'Tap to edit';
-          newSpan.textContent = newText || currentText;
-          input.replaceWith(newSpan);
-          // Re-attach edit handler on new span
-          newSpan.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            const inp2 = document.createElement('input');
-            inp2.type = 'text'; inp2.className = 'task-text-input';
-            inp2.value = loadTaskText(task); inp2.maxLength = 120;
-            newSpan.replaceWith(inp2); inp2.focus(); inp2.select();
-            const save2 = () => {
-              const t2 = inp2.value.trim();
-              if(t2) saveTaskText(task.id, t2);
-              const s2 = document.createElement('span');
-              s2.className = newSpan.className; s2.title = 'Tap to edit';
-              s2.textContent = t2 || loadTaskText(task);
-              inp2.replaceWith(s2);
-            };
-            inp2.addEventListener('blur', save2);
-            inp2.addEventListener('keydown', (e2) => {
-              if(e2.key==='Enter') inp2.blur();
-              if(e2.key==='Escape'){ inp2.value=loadTaskText(task); inp2.blur(); }
-            });
-          });
-        };
-        input.addEventListener('blur', saveText);
-        input.addEventListener('keydown', (ev) => {
-          if(ev.key === 'Enter') input.blur();
-          if(ev.key === 'Escape'){ input.value = currentText; input.blur(); }
-        });
-      });
-    }
+    if(taskTextEl) attachTextEdit(taskTextEl);
 
-    // Due label inline edit
-    const dueEl = row.querySelector('.task-due, .task-due-empty');
-    if(dueEl){
-      dueEl.addEventListener('click', (e) => {
+    // Due label inline edit — uses helper that always re-attaches itself
+    function attachDueEdit(el){
+      el.addEventListener('click', (e) => {
         e.stopPropagation();
-        const currentDue = loadTaskDue(task);
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'task-due-input';
-        input.value = currentDue;
-        input.placeholder = 'e.g. May';
-        input.maxLength = 20;
-        dueEl.replaceWith(input);
-        input.focus();
-        input.select();
-        const saveDue = () => {
-          const newDue = input.value.trim();
-          saveTaskDue(task.id, newDue);
-          const newSpan = document.createElement('span');
-          const isSoon = newDue && (newDue.toLowerCase().includes('week') || newDue === 'Soon' || newDue.includes('Apr'));
-          newSpan.className = newDue ? `task-due${isSoon?' soon':''}` : 'task-due-empty';
-          newSpan.title = newDue ? 'Tap to edit' : 'Add due date';
-          newSpan.textContent = newDue || '+';
-          input.replaceWith(newSpan);
-          // Re-attach inline edit handler on the new span
-          newSpan.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            const inp2 = document.createElement('input');
-            inp2.type = 'text'; inp2.className = 'task-due-input';
-            inp2.value = loadTaskDue(task); inp2.placeholder = 'e.g. May'; inp2.maxLength = 20;
-            newSpan.replaceWith(inp2); inp2.focus(); inp2.select();
-            const save2 = () => {
-              const d2 = inp2.value.trim();
-              saveTaskDue(task.id, d2);
-              const s2 = document.createElement('span');
-              const soon2 = d2 && (d2.toLowerCase().includes('week') || d2 === 'Soon' || d2.includes('Apr'));
-              s2.className = d2 ? `task-due${soon2?' soon':''}` : 'task-due-empty';
-              s2.title = d2 ? 'Tap to edit' : 'Add due date';
-              s2.textContent = d2 || '+';
-              inp2.replaceWith(s2);
-              s2.addEventListener('click', (e3) => { e3.stopPropagation(); s2.click(); });
-            };
-            inp2.addEventListener('blur', save2);
-            inp2.addEventListener('keydown', (e2) => {
-              if(e2.key==='Enter') inp2.blur();
-              if(e2.key==='Escape'){ inp2.value=loadTaskDue(task); inp2.blur(); }
-            });
-          });
-        };
-        input.addEventListener('blur', saveDue);
-        input.addEventListener('keydown', (ev) => {
-          if(ev.key === 'Enter'){ input.blur(); }
-          if(ev.key === 'Escape'){ input.value = loadTaskDue(task); input.blur(); }
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'task-due-input';
+        inp.value = loadTaskDue(task); inp.placeholder = 'e.g. May'; inp.maxLength = 20;
+        el.replaceWith(inp); inp.focus(); inp.select();
+        inp.addEventListener('blur', () => {
+          const val = inp.value.trim();
+          saveTaskDue(task.id, val);
+          const isSoon = val && (val.toLowerCase().includes('week') || val==='Soon' || val.includes('Apr'));
+          const span = document.createElement('span');
+          span.className = val ? `task-due${isSoon?' soon':''}` : 'task-due-empty';
+          span.title = val ? 'Tap to edit' : 'Add due date';
+          span.textContent = val || '+';
+          inp.replaceWith(span);
+          attachDueEdit(span);
+        });
+        inp.addEventListener('keydown', (ev) => {
+          if(ev.key==='Enter') inp.blur();
+          if(ev.key==='Escape'){ inp.value=loadTaskDue(task); inp.blur(); }
         });
       });
     }
+    const dueEl = row.querySelector('.task-due, .task-due-empty');
+    if(dueEl) attachDueEdit(dueEl);
 
     body.appendChild(row);
   });
