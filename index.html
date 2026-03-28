@@ -54,7 +54,7 @@
     }
 
     /* screens */
-    .screen { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 16px; display: none; }
+    .screen { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 80px; display: none; }
     .screen.active { display: block; }
     .screen::-webkit-scrollbar { display: none; }
 
@@ -346,6 +346,20 @@
       <div id="big3-list"></div>
     </div>
     <div id="sections-container"></div>
+    <div id="add-section-btn" class="add-section-btn" onclick="showAddSection()" style="margin-bottom:8px;">
+      <span class="add-section-btn-icon">+</span>
+      <span class="add-section-btn-text">Add section</span>
+    </div>
+    <div id="new-section-card" class="new-section-card" style="display:none;">
+      <div class="new-section-row">
+        <input id="new-section-name" class="new-section-input" placeholder="Section name (e.g. Learning)" maxlength="30"/>
+      </div>
+      <div class="color-picker-row" id="color-picker-row"></div>
+      <div class="new-section-actions">
+        <span class="btn-cancel" onclick="hideAddSection()">Cancel</span>
+        <button class="btn-save" onclick="saveNewSection()">Add section</button>
+      </div>
+    </div>
     <div id="focus-block" class="focus-block" style="display:none;">
       <div class="focus-header">
         <div class="focus-dot"></div>
@@ -694,7 +708,7 @@ function calcStreak(habitId){
 // Returns a map of habitId -> streak count
 function calcAllStreaks(){
   const streaks = {};
-  CONFIG.sections.forEach(sec => {
+  getLiveSections().forEach(sec => {
     sec.habits.forEach(h => {
       streaks[h.id] = calcStreak(h.id);
     });
@@ -772,8 +786,11 @@ function renderSections(){
 
     const editBtn = hdr.querySelector('.habit-edit-btn');
     hdr.addEventListener('click', (e) => {
-      if(e.target === editBtn) return;
-      sec._collapsed=!wrap.classList.contains('collapsed'); renderSections();
+      if(e.target.classList.contains('habit-edit-btn')) return;
+      if(e.target.closest('.habit-edit-btn')) return;
+      const nowCollapsed = !wrap.classList.contains('collapsed');
+      wrap.classList.toggle('collapsed', nowCollapsed);
+      hdr.querySelector('.sec-chevron').classList.toggle('open', !nowCollapsed);
     });
 
     let editMode = false;
@@ -897,7 +914,7 @@ function renderWeekGrid(days,today){
   document.getElementById('grid-header').innerHTML='<div></div>'+
     days.map((d,i)=>`<div class="grid-day-lbl ${dateKey(d)===today?'is-today':''}">${DLBLS[i]}</div>`).join('');
   const body=document.getElementById('grid-body'); body.innerHTML='';
-  CONFIG.sections.forEach(sec=>{
+  getLiveSections().forEach(sec=>{
     sec.habits.forEach(h=>{
       const row=document.createElement('div'); row.className='grid-habit-row';
       let html=`<div class="grid-habit-name" style="color:${sec.color};">${h.name}</div>`;
