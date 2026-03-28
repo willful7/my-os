@@ -103,7 +103,7 @@
     .sec-meta { font-size: 11px; color: var(--text3); margin-left: 4px; }
     .sec-chevron { font-size: 12px; color: var(--text3); transition: transform .2s; display: inline-block; }
     .sec-chevron.open { transform: rotate(90deg); }
-    .sec-body { border-top: 0.5px solid var(--border); }
+    .sec-body { border-top: 0.5px solid var(--border); overflow: hidden; max-width: 100%; }
     .section.collapsed .sec-body { display: none; }
 
     /* habit rows */
@@ -237,7 +237,7 @@
     /* ── Habit management ───────────────────────────────────── */
     .habit-edit-btn { font-size: 10px; font-weight: 500; color: var(--text3); cursor: pointer; padding: 2px 6px; border-radius: 6px; border: 0.5px solid var(--border); background: transparent; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
     .habit-edit-btn:hover { background: var(--bg2); }
-    .habit-row-editing { background: var(--bg2); }
+    .habit-row-editing { background: var(--bg2); overflow: hidden; max-width: 100%; box-sizing: border-box; }
     .habit-name-input { flex: 1; font-size: 14px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; min-width: 0; max-width: 100%; }
     .habit-del-btn { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border2); color: var(--text3); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; line-height: 1; }
     .habit-del-btn:hover { border-color: #E24B4A; color: #E24B4A; }
@@ -245,12 +245,12 @@
     .habit-move-btn { width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text3); font-size: 9px; border-radius: 3px; -webkit-tap-highlight-color: transparent; }
     .habit-move-btn:hover { background: var(--bg3); color: var(--text2); }
     .habit-move-btn.hidden { opacity: 0; pointer-events: none; }
-    .add-habit-row { display: flex; align-items: center; gap: 9px; padding: 7px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-top: 0.5px solid var(--border); }
+    .add-habit-row { display: flex; align-items: center; gap: 9px; padding: 7px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-top: 0.5px solid var(--border); max-width: 100%; box-sizing: border-box; }
     .add-habit-icon { width: 18px; height: 18px; border-radius: 50%; border: 1.5px dashed var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 14px; line-height: 1; }
     .add-habit-text { font-size: 13px; color: var(--text3); }
-    .new-habit-wrap { display: none; padding: 6px 12px 8px; border-top: 0.5px solid var(--border); align-items: center; gap: 8px; }
+    .new-habit-wrap { display: none; padding: 6px 12px 8px; border-top: 0.5px solid var(--border); align-items: center; gap: 8px; max-width: 100%; box-sizing: border-box; }
     .new-habit-wrap.visible { display: flex; }
-    .new-habit-input { flex: 1; font-size: 13px; border: none; border-bottom: 1px solid var(--border2); outline: none; background: transparent; color: var(--text); padding: 1px 0; }
+    .new-habit-input { flex: 1; font-size: 13px; border: none; border-bottom: 1px solid var(--border2); outline: none; background: transparent; color: var(--text); padding: 1px 0; min-width: 0; width: 0; }
     .new-habit-input::placeholder { color: var(--text3); }
     .new-habit-save { font-size: 12px; font-weight: 500; color: #534AB7; cursor: pointer; padding: 4px 6px; -webkit-tap-highlight-color: transparent; }
     .add-section-btn { margin: 8px 14px 0; display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--bg); border: 0.5px dashed var(--border2); border-radius: var(--radius); cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -1932,3 +1932,4 @@ if('caches' in window){
 
 </body>
 </html>
+
