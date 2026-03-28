@@ -234,6 +234,81 @@
     .task-reorder-btn.hidden { opacity: 0; pointer-events: none; }
     .task-del-btn { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); color: var(--text3); font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; line-height: 1; }
     .task-del-btn:hover { border-color: #E24B4A; color: #E24B4A; }
+    /* ── Plan tab ───────────────────────────────────────────── */
+    .plan-top-bar { padding: 10px 16px; border-bottom: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; }
+    .plan-view-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .seg-bar { display: flex; border: 0.5px solid var(--border2); border-radius: 8px; overflow: hidden; }
+    .seg-btn { flex: 1; text-align: center; font-size: 11px; font-weight: 500; padding: 6px 2px; cursor: pointer; color: var(--text2); background: var(--bg); border-right: 0.5px solid var(--border2); transition: all .15s; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+    .seg-btn:last-child { border-right: none; }
+    .seg-btn.active { background: var(--text); color: var(--bg); }
+    .plan-panel { display: none; }
+    .plan-panel.active { display: block; }
+    .plan-section { margin: 10px 14px 0; }
+    .plan-sec-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 6px; }
+
+    /* Quarter */
+    .quarter-nav { display: flex; align-items: center; justify-content: space-between; margin: 10px 14px 0; }
+    .quarter-nav-btn { font-size: 20px; color: var(--text2); cursor: pointer; padding: 0 8px; user-select: none; }
+    .quarter-label { font-size: 15px; font-weight: 600; color: var(--text); }
+    .quarter-sub { font-size: 11px; color: var(--text3); }
+    .goal-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; overflow: hidden; }
+    .goal-header { display: flex; align-items: center; gap: 8px; padding: 9px 12px 6px; }
+    .goal-role-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .goal-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; min-width: 0; }
+    .goal-name-input { flex: 1; font-size: 16px; font-weight: 500; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; min-width: 0; }
+    .goal-pct { font-size: 13px; font-weight: 600; min-width: 36px; text-align: right; }
+    .goal-bar-wrap { padding: 0 12px 8px; }
+    .goal-bar-bg { height: 4px; background: var(--border2); border-radius: 2px; }
+    .goal-bar-fill { height: 4px; border-radius: 2px; transition: width .3s; }
+    .goal-proj-link { font-size: 10px; color: var(--text3); padding: 0 12px 7px; display: block; }
+    .add-goal-btn { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--bg); border: 0.5px dashed var(--border2); border-radius: var(--radius); cursor: pointer; margin-bottom: 7px; -webkit-tap-highlight-color: transparent; }
+    .add-goal-text { font-size: 13px; color: var(--text3); }
+
+    /* Big Rocks / Deep Work */
+    .deep-block-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; padding: 9px 12px; display: flex; align-items: center; gap: 10px; }
+    .deep-block-color { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
+    .deep-block-info { flex: 1; min-width: 0; }
+    .deep-block-label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .deep-block-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .deep-block-del { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border2); color: var(--text3); font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .deep-block-del:hover { border-color: #E24B4A; color: #E24B4A; }
+    .deep-block-form { background: var(--bg2); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 7px; }
+    .deep-form-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .deep-form-input { flex: 1; font-size: 16px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 2px 0; min-width: 0; }
+    .deep-form-select { font-size: 13px; border: 0.5px solid var(--border2); border-radius: 6px; background: var(--bg); color: var(--text); padding: 4px 6px; outline: none; }
+    .deep-form-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+    /* Ideal Week */
+    .iw-wrap { margin: 10px 14px 0; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .iw-legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 7px 10px; border-bottom: 0.5px solid var(--border); }
+    .iw-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text2); }
+    .iw-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .iw-grid-wrap { overflow-x: auto; }
+    .iw-grid { display: grid; min-width: 280px; }
+    .iw-header-cell { text-align: center; font-size: 10px; font-weight: 600; color: var(--text3); padding: 4px 0; border-bottom: 0.5px solid var(--border); border-right: 0.5px solid var(--border); }
+    .iw-header-cell:last-child { border-right: none; }
+    .iw-time-cell { font-size: 9px; color: var(--text3); text-align: right; padding: 0 4px; display: flex; align-items: center; justify-content: flex-end; border-right: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+    .iw-cell { border-right: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); cursor: pointer; min-height: 22px; transition: opacity .1s; -webkit-tap-highlight-color: transparent; }
+    .iw-cell:last-child { border-right: none; }
+    .iw-cell:hover { opacity: 0.8; }
+    .iw-reset-btn { display: block; text-align: center; font-size: 11px; color: var(--text3); padding: 7px; cursor: pointer; border-top: 0.5px solid var(--border); -webkit-tap-highlight-color: transparent; }
+
+    /* Mission */
+    .mission-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 8px; }
+    .mission-lbl { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 6px; }
+    .mission-text { font-size: 13px; color: var(--text); line-height: 1.5; cursor: pointer; }
+    .mission-textarea { width: 100%; font-size: 16px; border: none; outline: none; background: transparent; color: var(--text); line-height: 1.5; resize: none; font-family: inherit; padding: 0; min-height: 60px; }
+    .roles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+    .role-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+    .role-card-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .role-card-goal { font-size: 11px; color: var(--text3); line-height: 1.3; }
+    .role-name-input { width: 100%; font-size: 16px; font-weight: 500; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; margin-bottom: 4px; }
+    .role-goal-input { width: 100%; font-size: 16px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text3); outline: none; }
+    .values-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .value-chip { font-size: 12px; padding: 3px 10px; border-radius: 10px; background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .value-chip-del { font-size: 10px; color: var(--text3); margin-left: 4px; }
+    .add-value-input { font-size: 16px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; width: 80px; }
+
     /* ── Task text inline edit ──────────────────────────────── */
     .task-text-input { flex: 1; font-size: 16px; border: none; border-bottom: 1px solid var(--border2); background: transparent; color: var(--text); outline: none; padding: 1px 0; min-width: 0; }
     /* ── Habit management ───────────────────────────────────── */
@@ -427,6 +502,132 @@
       </div>
     </div>
     <div id="projects-container"></div>
+  </div>
+
+
+  <!-- PLAN screen -->
+  <div id="screen-plan" class="screen">
+    <div class="plan-top-bar">
+      <div class="plan-view-title">Plan</div>
+      <div class="seg-bar">
+        <div class="seg-btn active" data-panel="quarter">Quarter</div>
+        <div class="seg-btn" data-panel="bigrocks">Big Rocks</div>
+        <div class="seg-btn" data-panel="idealweek">Ideal Week</div>
+        <div class="seg-btn" data-panel="mission">Mission</div>
+      </div>
+    </div>
+
+    <!-- Quarter panel -->
+    <div id="plan-quarter" class="plan-panel active">
+      <div class="quarter-nav">
+        <div class="quarter-nav-btn" onclick="shiftQuarter(-1)">&#8249;</div>
+        <div style="text-align:center;">
+          <div class="quarter-label" id="quarter-label">Q1 2026</div>
+          <div class="quarter-sub" id="quarter-sub">Week 1 of 13</div>
+        </div>
+        <div class="quarter-nav-btn" onclick="shiftQuarter(1)">&#8250;</div>
+      </div>
+      <div class="plan-section">
+        <div id="goals-list"></div>
+        <div class="add-goal-btn" onclick="showAddGoalForm()">
+          <span style="font-size:14px;color:var(--text3);">+</span>
+          <span class="add-goal-text">Add goal</span>
+        </div>
+        <div id="add-goal-form" style="display:none;" class="deep-block-form">
+          <div class="deep-form-row">
+            <input id="new-goal-name" class="deep-form-input" placeholder="Goal description…" maxlength="80"/>
+          </div>
+          <div class="deep-form-row">
+            <select id="new-goal-role" class="deep-form-select">
+              <option value="">— Role —</option>
+              <option value="faith">Faith</option>
+              <option value="husband">Husband & Father</option>
+              <option value="work">AV Leader</option>
+              <option value="learner">Lifelong Learner</option>
+              <option value="health">Health</option>
+              <option value="maker">Maker & Creator</option>
+            </select>
+            <select id="new-goal-proj" class="deep-form-select" style="flex:1;"></select>
+          </div>
+          <div class="deep-form-actions">
+            <span class="btn-cancel" onclick="hideAddGoalForm()">Cancel</span>
+            <button class="btn-save" onclick="saveNewGoal()">Add goal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Big Rocks panel -->
+    <div id="plan-bigrocks" class="plan-panel">
+      <div class="plan-section" style="margin-top:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div class="plan-sec-label" style="margin-bottom:0;" id="bigrocks-week-label">WEEK OF —</div>
+          <button class="btn-save" style="font-size:11px;padding:4px 10px;" onclick="showDeepBlockForm()">+ Add block</button>
+        </div>
+        <div id="deep-blocks-list"></div>
+        <div id="deep-block-form" style="display:none;" class="deep-block-form">
+          <div class="deep-form-row">
+            <input id="db-label" class="deep-form-input" placeholder="What are you working on?" maxlength="60"/>
+          </div>
+          <div class="deep-form-row">
+            <select id="db-day" class="deep-form-select">
+              <option value="Mon">Mon</option><option value="Tue">Tue</option>
+              <option value="Wed">Wed</option><option value="Thu">Thu</option>
+              <option value="Fri">Fri</option><option value="Sat">Sat</option>
+              <option value="Sun">Sun</option>
+            </select>
+            <input id="db-time" class="deep-form-input" placeholder="e.g. 5–7am" maxlength="20" style="max-width:100px;"/>
+            <select id="db-color" class="deep-form-select">
+              <option value="#185FA5">Work</option>
+              <option value="#BA7517">Self</option>
+              <option value="#534AB7">Faith</option>
+              <option value="#1D9E75">Health</option>
+              <option value="#888780">Other</option>
+            </select>
+          </div>
+          <div class="deep-form-actions">
+            <span class="btn-cancel" onclick="hideDeepBlockForm()">Cancel</span>
+            <button class="btn-save" onclick="saveDeepBlock()">Add block</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ideal Week panel -->
+    <div id="plan-idealweek" class="plan-panel">
+      <div class="iw-wrap" style="margin-bottom:8px;">
+        <div class="iw-legend">
+          <div class="iw-legend-item"><div class="iw-legend-dot" style="background:#B5D4F4;"></div>Deep work</div>
+          <div class="iw-legend-item"><div class="iw-legend-dot" style="background:#F5C4B3;"></div>Meetings</div>
+          <div class="iw-legend-item"><div class="iw-legend-dot" style="background:#C0DD97;"></div>Planning</div>
+          <div class="iw-legend-item"><div class="iw-legend-dot" style="background:#D3D1C7;"></div>Admin</div>
+          <div class="iw-legend-item"><div class="iw-legend-dot" style="background:#CECBF6;"></div>Personal</div>
+        </div>
+        <div class="iw-grid-wrap">
+          <div class="iw-grid" id="iw-grid"></div>
+        </div>
+        <div class="iw-reset-btn" onclick="resetIdealWeek()">Reset to blank</div>
+      </div>
+      <div style="padding:0 14px 4px;font-size:11px;color:var(--text3);">Tap any cell to cycle through block types. Your template is saved automatically.</div>
+    </div>
+
+    <!-- Mission panel -->
+    <div id="plan-mission" class="plan-panel">
+      <div class="plan-section">
+        <div class="plan-sec-label">PERSONAL MISSION</div>
+        <div class="mission-card">
+          <div class="mission-lbl">MISSION STATEMENT</div>
+          <div id="mission-text" class="mission-text"></div>
+        </div>
+        <div class="plan-sec-label">MY ROLES</div>
+        <div class="roles-grid" id="roles-grid"></div>
+        <div class="plan-sec-label">CORE VALUES</div>
+        <div class="mission-card">
+          <div class="values-row" id="values-row"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Bottom nav -->
@@ -1353,6 +1554,7 @@ function navigate(tab){
   if(tab==='today') renderToday();
   if(tab==='week') renderWeekView();
   if(tab==='projects') renderProjects();
+  if(tab==='plan') renderPlan();
 }
 
 // ── Supabase ──────────────────────────────────────────────────
@@ -1439,6 +1641,10 @@ async function loadAppStateFromSupabase(){
       // Load habit config
       if(row.key === 'habit-config' && Array.isArray(row.value)){
         localStorage.setItem(habitConfigKey(), JSON.stringify(row.value));
+      }
+      // Load plan state
+      if(row.key && row.key.startsWith('plan-') && row.value !== undefined){
+        localStorage.setItem(row.key, JSON.stringify(row.value));
       }
     });
   }catch(e){ console.log('Load state error:', e); }
@@ -1861,6 +2067,426 @@ document.getElementById('proj-filters').addEventListener('click', e => {
 });
 
 // Unregister service workers and clear all caches on every load
+
+
+// ══════════════════════════════════════════════════════════════
+// PLAN TAB
+// ══════════════════════════════════════════════════════════════
+
+// ── Plan tab segment navigation ──────────────────────────────
+document.querySelectorAll('.seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const panel = btn.dataset.panel;
+    document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.plan-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('plan-' + panel).classList.add('active');
+    if(panel === 'quarter')   renderQuarter();
+    if(panel === 'bigrocks')  renderBigRocks();
+    if(panel === 'idealweek') renderIdealWeek();
+    if(panel === 'mission')   renderMission();
+  });
+});
+
+function renderPlan(){
+  const activePanel = document.querySelector('.seg-btn.active')?.dataset.panel || 'quarter';
+  if(activePanel === 'quarter')   renderQuarter();
+  if(activePanel === 'bigrocks')  renderBigRocks();
+  if(activePanel === 'idealweek') renderIdealWeek();
+  if(activePanel === 'mission')   renderMission();
+}
+
+// ── Quarter / Goals ───────────────────────────────────────────
+const ROLE_COLORS = {
+  faith:'#534AB7', husband:'#D4537E', work:'#185FA5',
+  learner:'#BA7517', health:'#1D9E75', maker:'#888780'
+};
+const ROLE_NAMES = {
+  faith:'Faith', husband:'Husband & Father', work:'AV Leader',
+  learner:'Lifelong Learner', health:'Health', maker:'Maker & Creator'
+};
+
+let currentQuarter = getCurrentQuarter();
+
+function getCurrentQuarter(){
+  const now = new Date();
+  return `Q${Math.ceil((now.getMonth()+1)/3)}-${now.getFullYear()}`;
+}
+function getQuarterLabel(qk){
+  const [q,y] = qk.split('-');
+  return `${q} ${y}`;
+}
+function getQuarterWeekLabel(){
+  const now = new Date();
+  const jan1 = new Date(now.getFullYear(),0,1);
+  const wn = Math.ceil(((now-jan1)/86400000+jan1.getDay()+1)/7);
+  const q = Math.ceil((now.getMonth()+1)/3);
+  const qw = wn - (q-1)*13;
+  return `Week ${Math.max(1,Math.min(13,qw))} of 13`;
+}
+function shiftQuarter(dir){
+  const [q,y] = currentQuarter.split('-');
+  let qn = parseInt(q.slice(1)) + dir;
+  let yn = parseInt(y);
+  if(qn < 1){ qn=4; yn--; }
+  if(qn > 4){ qn=1; yn++; }
+  currentQuarter = `Q${qn}-${yn}`;
+  renderQuarter();
+}
+
+function goalsKey(qk){ return 'plan-goals-' + qk; }
+function loadGoals(qk){
+  try{ return JSON.parse(localStorage.getItem(goalsKey(qk)) || '[]'); }
+  catch{ return []; }
+}
+function saveGoals(qk, goals){
+  localStorage.setItem(goalsKey(qk), JSON.stringify(goals));
+  syncAppState(goalsKey(qk), goals);
+}
+
+function calcGoalProgress(goal){
+  if(!goal.projectId) return goal.manualPct || 0;
+  const proj = CONFIG.projects.find(p => p.id === goal.projectId);
+  if(!proj) return goal.manualPct || 0;
+  const tasks = getTasksDone(proj);
+  if(!tasks.length) return 0;
+  return Math.round(tasks.filter(t=>t.done).length / tasks.length * 100);
+}
+
+function renderQuarter(){
+  document.getElementById('quarter-label').textContent = getQuarterLabel(currentQuarter);
+  const isCurrentQ = currentQuarter === getCurrentQuarter();
+  document.getElementById('quarter-sub').textContent = isCurrentQ ? getQuarterWeekLabel() : '';
+  const goals = loadGoals(currentQuarter);
+  const list = document.getElementById('goals-list');
+  list.innerHTML = '';
+  goals.forEach((goal, idx) => {
+    const pct = calcGoalProgress(goal);
+    const color = ROLE_COLORS[goal.role] || '#888780';
+    const projName = goal.projectId ? (CONFIG.projects.find(p=>p.id===goal.projectId)?.name || '') : '';
+    const card = document.createElement('div');
+    card.className = 'goal-card';
+    card.innerHTML = `
+      <div class="goal-header">
+        <div class="goal-role-dot" style="background:${color};"></div>
+        <span class="goal-name" title="Tap to edit">${goal.name}</span>
+        <span class="goal-pct" style="color:${color};">${pct}%</span>
+        <div class="task-del-btn" title="Remove goal">&#215;</div>
+      </div>
+      <div class="goal-bar-wrap">
+        <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;background:${color};"></div></div>
+      </div>
+      ${projName ? `<span class="goal-proj-link">${ROLE_NAMES[goal.role]||goal.role} · linked to: ${projName}</span>` : `<span class="goal-proj-link">${ROLE_NAMES[goal.role]||goal.role}</span>`}`;
+
+    // Tap goal name to edit
+    const nameEl = card.querySelector('.goal-name');
+    nameEl.addEventListener('click', () => {
+      const inp = document.createElement('input');
+      inp.className = 'goal-name-input'; inp.value = goal.name; inp.maxLength = 80;
+      nameEl.replaceWith(inp); inp.focus(); inp.select();
+      const save = () => {
+        if(inp.value.trim()) goal.name = inp.value.trim();
+        const goals2 = loadGoals(currentQuarter);
+        const g = goals2.find(g=>g.id===goal.id);
+        if(g) g.name = goal.name;
+        saveGoals(currentQuarter, goals2);
+        renderQuarter();
+      };
+      inp.addEventListener('blur', save);
+      inp.addEventListener('keydown', ev => { if(ev.key==='Enter') inp.blur(); });
+    });
+
+    // Delete goal
+    card.querySelector('.task-del-btn').addEventListener('click', () => {
+      if(confirm(`Remove goal "${goal.name}"?`)){
+        const goals2 = loadGoals(currentQuarter).filter(g=>g.id!==goal.id);
+        saveGoals(currentQuarter, goals2);
+        renderQuarter();
+      }
+    });
+
+    list.appendChild(card);
+  });
+}
+
+function showAddGoalForm(){
+  // Populate project dropdown
+  const sel = document.getElementById('new-goal-proj');
+  sel.innerHTML = '<option value="">— No project link —</option>';
+  CONFIG.projects.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  document.getElementById('add-goal-form').style.display = 'block';
+  document.getElementById('new-goal-name').focus();
+}
+function hideAddGoalForm(){
+  document.getElementById('add-goal-form').style.display = 'none';
+  document.getElementById('new-goal-name').value = '';
+}
+function saveNewGoal(){
+  const name = document.getElementById('new-goal-name').value.trim();
+  const role = document.getElementById('new-goal-role').value;
+  const projectId = document.getElementById('new-goal-proj').value;
+  if(!name){ document.getElementById('new-goal-name').focus(); return; }
+  const goals = loadGoals(currentQuarter);
+  goals.push({ id: 'g-'+Date.now(), name, role, projectId, manualPct: 0 });
+  saveGoals(currentQuarter, goals);
+  hideAddGoalForm();
+  renderQuarter();
+}
+
+// ── Big Rocks / Deep Work ─────────────────────────────────────
+function deepBlocksKey(wk){ return 'plan-deepblocks-' + wk; }
+function loadDeepBlocks(wk){
+  try{ return JSON.parse(localStorage.getItem(deepBlocksKey(wk)) || '[]'); }
+  catch{ return []; }
+}
+function saveDeepBlocks(wk, blocks){
+  localStorage.setItem(deepBlocksKey(wk), JSON.stringify(blocks));
+  syncAppState(deepBlocksKey(wk), blocks);
+}
+
+function renderBigRocks(){
+  const wk = weekKey();
+  const blocks = loadDeepBlocks(wk);
+  const days = getWeekDays(getMondayOf(new Date()));
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mon = days[0], sun = days[6];
+  document.getElementById('bigrocks-week-label').textContent =
+    `WEEK OF ${months[mon.getMonth()]} ${mon.getDate()} – ${months[sun.getMonth()]} ${sun.getDate()}`;
+  const list = document.getElementById('deep-blocks-list');
+  list.innerHTML = '';
+  if(!blocks.length){
+    list.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0;">No deep work blocks scheduled. Add one above.</div>';
+    return;
+  }
+  const dayOrder = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  [...blocks].sort((a,b) => dayOrder.indexOf(a.day)-dayOrder.indexOf(b.day)).forEach(block => {
+    const card = document.createElement('div');
+    card.className = 'deep-block-card';
+    card.innerHTML = `
+      <div class="deep-block-color" style="background:${block.color};"></div>
+      <div class="deep-block-info">
+        <div class="deep-block-label">${block.label}</div>
+        <div class="deep-block-meta">${block.day} · ${block.time}</div>
+      </div>
+      <div class="deep-block-del">&#215;</div>`;
+    card.querySelector('.deep-block-del').addEventListener('click', () => {
+      const updated = loadDeepBlocks(wk).filter(b=>b.id!==block.id);
+      saveDeepBlocks(wk, updated);
+      renderBigRocks();
+    });
+    list.appendChild(card);
+  });
+}
+function showDeepBlockForm(){ document.getElementById('deep-block-form').style.display='block'; document.getElementById('db-label').focus(); }
+function hideDeepBlockForm(){ document.getElementById('deep-block-form').style.display='none'; document.getElementById('db-label').value=''; }
+function saveDeepBlock(){
+  const label = document.getElementById('db-label').value.trim();
+  if(!label){ document.getElementById('db-label').focus(); return; }
+  const day   = document.getElementById('db-day').value;
+  const time  = document.getElementById('db-time').value.trim() || '';
+  const color = document.getElementById('db-color').value;
+  const wk    = weekKey();
+  const blocks = loadDeepBlocks(wk);
+  blocks.push({ id:'db-'+Date.now(), label, day, time, color });
+  saveDeepBlocks(wk, blocks);
+  hideDeepBlockForm();
+  renderBigRocks();
+}
+
+// ── Ideal Week ────────────────────────────────────────────────
+const IW_HOURS = ['4a','5a','6a','7a','8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p','8p','9p'];
+const IW_DAYS  = ['Mon','Tue','Wed','Thu','Fri'];
+const IW_TYPES = ['empty','deep','meet','plan','admin','personal'];
+const IW_COLORS = {
+  empty:'transparent', deep:'#B5D4F4', meet:'#F5C4B3',
+  plan:'#C0DD97', admin:'#D3D1C7', personal:'#CECBF6'
+};
+
+function iwKey(){ return 'plan-ideal-week'; }
+function loadIdealWeek(){
+  try{
+    const stored = JSON.parse(localStorage.getItem(iwKey()) || 'null');
+    if(stored) return stored;
+  }catch{}
+  // Default template
+  const grid = {};
+  IW_HOURS.forEach((h,hi) => {
+    IW_DAYS.forEach((d,di) => {
+      const key = `${d}-${hi}`;
+      if(hi<=1) grid[key]='personal';           // 4–5am personal
+      else if(hi<=4) grid[key]='deep';           // 5–8am deep work
+      else if(d==='Fri' && hi<=6) grid[key]='plan'; // Fri 8–10am plan
+      else if(hi>=15) grid[key]='personal';      // 7pm+ personal
+      else grid[key]='empty';
+    });
+  });
+  return grid;
+}
+function saveIdealWeek(grid){
+  localStorage.setItem(iwKey(), JSON.stringify(grid));
+  syncAppState(iwKey(), grid);
+}
+function resetIdealWeek(){
+  if(!confirm('Reset ideal week to blank?')) return;
+  localStorage.removeItem(iwKey());
+  renderIdealWeek();
+}
+
+function renderIdealWeek(){
+  const grid = loadIdealWeek();
+  const container = document.getElementById('iw-grid');
+  // Grid: 1 time col + 5 day cols
+  const cols = 1 + IW_DAYS.length;
+  container.style.gridTemplateColumns = `32px repeat(${IW_DAYS.length}, 1fr)`;
+  container.innerHTML = '';
+
+  // Header row
+  container.innerHTML += '<div class="iw-time-cell" style="border-bottom:0.5px solid var(--border);"></div>';
+  IW_DAYS.forEach(d => {
+    container.innerHTML += `<div class="iw-header-cell">${d}</div>`;
+  });
+
+  // Time rows
+  IW_HOURS.forEach((h, hi) => {
+    container.innerHTML += `<div class="iw-time-cell">${h}</div>`;
+    IW_DAYS.forEach(d => {
+      const key = `${d}-${hi}`;
+      const type = grid[key] || 'empty';
+      const color = IW_COLORS[type];
+      const cell = document.createElement('div');
+      cell.className = 'iw-cell';
+      cell.style.background = color;
+      cell.dataset.key = key;
+      cell.addEventListener('click', () => {
+        const g = loadIdealWeek();
+        const cur = g[key] || 'empty';
+        const next = IW_TYPES[(IW_TYPES.indexOf(cur)+1) % IW_TYPES.length];
+        g[key] = next;
+        saveIdealWeek(g);
+        cell.style.background = IW_COLORS[next];
+      });
+      container.appendChild(cell);
+    });
+  });
+}
+
+// ── Mission ───────────────────────────────────────────────────
+const DEFAULT_MISSION = {
+  statement: 'To glorify God by living with integrity, loving my family deeply, leading with excellence, and creating things that matter — growing every day into the man I was made to be.',
+  roles: [
+    { name:'Follower of Christ', goal:'Know the Word. Live the faith daily.' },
+    { name:'Husband & Father',   goal:'Present, connected, intentional.' },
+    { name:'AV Leader',          goal:'Strategic partner, not order taker.' },
+    { name:'Lifelong Learner',   goal:'PMP, Python, craft, language.' },
+    { name:'Health Steward',     goal:'Strong body, clear mind, good fuel.' },
+    { name:'Maker & Creator',    goal:'Build, fabricate, make things real.' },
+  ],
+  values: ['Faith','Integrity','Family','Excellence','Growth','Creativity']
+};
+const ROLE_CARD_COLORS = ['#534AB7','#D4537E','#185FA5','#BA7517','#1D9E75','#888780'];
+
+function missionKey(){ return 'plan-mission'; }
+function loadMission(){
+  try{
+    const s = JSON.parse(localStorage.getItem(missionKey()) || 'null');
+    if(s) return s;
+  }catch{}
+  return JSON.parse(JSON.stringify(DEFAULT_MISSION));
+}
+function saveMission(m){
+  localStorage.setItem(missionKey(), JSON.stringify(m));
+  syncAppState(missionKey(), m);
+}
+
+function renderMission(){
+  const m = loadMission();
+
+  // Statement
+  const stEl = document.getElementById('mission-text');
+  stEl.innerHTML = '';
+  const stSpan = document.createElement('div');
+  stSpan.style.cssText = 'font-size:13px;color:var(--text);line-height:1.5;cursor:pointer;font-style:italic;';
+  stSpan.textContent = m.statement;
+  stSpan.title = 'Tap to edit';
+  stSpan.addEventListener('click', () => {
+    const ta = document.createElement('textarea');
+    ta.className = 'mission-textarea'; ta.value = m.statement;
+    stSpan.replaceWith(ta); ta.focus();
+    ta.addEventListener('blur', () => {
+      if(ta.value.trim()) m.statement = ta.value.trim();
+      saveMission(m); renderMission();
+    });
+  });
+  stEl.appendChild(stSpan);
+
+  // Roles
+  const rolesEl = document.getElementById('roles-grid');
+  rolesEl.innerHTML = '';
+  m.roles.forEach((role, i) => {
+    const card = document.createElement('div');
+    card.className = 'role-card';
+    const color = ROLE_CARD_COLORS[i % ROLE_CARD_COLORS.length];
+    card.innerHTML = `
+      <div class="role-card-name" style="color:${color};">${role.name}</div>
+      <div class="role-card-goal">${role.goal}</div>`;
+    card.title = 'Tap to edit';
+    card.addEventListener('click', () => {
+      card.innerHTML = `
+        <input class="role-name-input" value="${role.name}" maxlength="40" style="color:${color};"/>
+        <input class="role-goal-input" value="${role.goal}" maxlength="60"/>`;
+      card.querySelector('.role-name-input').focus();
+      const saveRole = () => {
+        const newName = card.querySelector('.role-name-input')?.value.trim();
+        const newGoal = card.querySelector('.role-goal-input')?.value.trim();
+        if(newName) role.name = newName;
+        if(newGoal !== undefined) role.goal = newGoal;
+        saveMission(m); renderMission();
+      };
+      card.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('blur', () => setTimeout(saveRole, 100));
+        inp.addEventListener('keydown', ev => { if(ev.key==='Enter') inp.blur(); });
+      });
+    });
+    rolesEl.appendChild(card);
+  });
+
+  // Values
+  const valEl = document.getElementById('values-row');
+  valEl.innerHTML = '';
+  m.values.forEach((val, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'value-chip';
+    chip.innerHTML = `${val}<span class="value-chip-del" title="Remove">&#215;</span>`;
+    chip.querySelector('.value-chip-del').addEventListener('click', (e) => {
+      e.stopPropagation();
+      m.values.splice(i,1); saveMission(m); renderMission();
+    });
+    valEl.appendChild(chip);
+  });
+  // Add value input
+  const addInp = document.createElement('input');
+  addInp.className = 'add-value-input'; addInp.placeholder = '+ Add…'; addInp.maxLength = 20;
+  addInp.addEventListener('keydown', ev => {
+    if(ev.key==='Enter' && addInp.value.trim()){
+      m.values.push(addInp.value.trim()); saveMission(m); renderMission();
+    }
+  });
+  valEl.appendChild(addInp);
+}
+
+// Load plan state from Supabase
+function loadPlanStateFromSupabase(rows){
+  rows.forEach(row => {
+    if(!row.key) return;
+    if(row.key.startsWith('plan-') && row.value !== undefined){
+      localStorage.setItem(row.key, JSON.stringify(row.value));
+    }
+  });
+}
 
 // Add section UI helpers
 let selectedSectionColor = '#534AB7';
